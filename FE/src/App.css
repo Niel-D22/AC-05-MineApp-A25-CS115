@@ -7,6 +7,20 @@
   --color-card:#2F2F2F;
 }
 
+/* Sembunyikan scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  scrollbar-width: none; 
+}
+
+
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   font-family: 'Kode Mono', monospace;
 }
@@ -35,4 +49,12 @@ body {
 
 .nav-item.active::after {
   width: 100%;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

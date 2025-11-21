@@ -7,7 +7,7 @@ const Navbar = () => {
 
     
   return (
-    <div className=" kode-mono flex justify-between items-center px-30 h-[91px] bg-black text-white">
+    <div className=" sticky top-0 z-50 kode-mono flex justify-between items-center px-30 h-[91px] bg-black text-white">
       <h1 className="text-3xl  ">LOGO</h1>
       <div>
         <ul className="flex gap-30">

@@ -44,7 +44,8 @@ const Beranda = () => {
         {/* end card panjang di awal beranda */}
 
         {/* Card rekomendasi beranda scroll */}
-        <div className="flex gap-4 overflow-x-auto no-scrollbar">
+       <div className="flex gap-4 overflow-x-scroll overflow-y-hidden no-scrollbar">
+
           {recommendations.map((item) => (
             <div
               key={item.id}
@@ -64,7 +65,7 @@ const Beranda = () => {
         {/* end Card rekomendasi beranda scroll */}
 
         {/* /* bagian Hero Gambar Ai nya  */ }
-        <div className="bg-card w-full h-[456px] rounded-[20px] px-5 py-15 flex gap-10">
+        <div className="bg-card w-full h-[456px] rounded-[20px] px-8 py-15 flex gap-60">
         <div className=" space-y-11">
           <div className="space-y-4">
             <h1 className="text-[40px] font-bold w-90">
