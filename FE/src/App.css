@@ -6,6 +6,11 @@
   --color-font:#BC8CF2;
   --color-card:#2F2F2F;
 }
+@font-face {
+  font-family: "OctopusGame";
+  src: url("/src/assets/font/Octopus Game.ttf") format("truetype");
+}
+
 
 /* Sembunyikan scrollbar */
 ::-webkit-scrollbar {
@@ -24,6 +29,45 @@ html {
 body {
   font-family: 'Kode Mono', monospace;
 }
+
+
+/* Animasi Masuk WEB */
+.logoGlow {
+  opacity: 0;
+  filter: blur(25px) brightness(1.3);
+  transform: scale(0.7);
+  animation: popIn 1.4s cubic-bezier(0.25, 0.8, 0.4, 1) forwards,
+             glow 2s ease-in-out 1.4s infinite alternate;
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    filter: blur(25px) brightness(1.3);
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(8px) brightness(1.1);
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: scale(1);
+  }
+}
+
+@keyframes glow {
+  0% {
+    filter: drop-shadow(0 0 3px #a86bff);
+  }
+  100% {
+    filter: drop-shadow(0 0 12px #c69dff);
+  }
+}
+
+
 
 .nav-item {
   position: relative;
@@ -58,3 +102,5 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+
