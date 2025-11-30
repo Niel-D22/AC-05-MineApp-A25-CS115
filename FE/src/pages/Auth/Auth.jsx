@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useEffect } from "react";
+import BgBlur from "../../assets/BgBlur.png"
 
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -14,9 +15,10 @@ const Auth = () => {
 
   return (
     <div
-      className={`kode-mono min-h-screen flex items-center justify-center bg-black transition-opacity duration-700 ${
+      className={`kode-mono min-h-screen flex items-center justify-center h-screen  bg-cover bg-center transition-opacity duration-500${
         fadeIn ? "opacity-100" : "opacity-0"
       }`}
+      style={{ backgroundImage: `url(${BgBlur})` }}
     >
       <div className="relative w-[800px] h-[500px] bg-[#0f0f0f] rounded-xl shadow-xl overflow-hidden border bo">
         {/* LOGIN FORM */}
