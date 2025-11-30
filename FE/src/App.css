@@ -1,11 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background:#181818;
-  --color-primary:#AA14F0;
-  --color-font:#BC8CF2;
-  --color-card:#2F2F2F;
+  /* COLORS */
+  --color-background: #181818;
+  --color-primary: #AA14F0;
+  --color-font: #BC8CF2;
+  --color-card: #2F2F2F;
+  --color-stroke: #EEEEEE;
+  --color-overlay: rgb(24 24 24 / 80%);
+  --color-text-body: #EEEEEE;
+  --color-notif: #FCA311;
+
+  /* FONTS */
+  --font-navbar: "Syne", sans-serif;
+  --font-btn: "Inter", sans-serif;
+  --font-h1: "Syne", sans-serif;
+  --font-h2: "Archivo", sans-serif;
+  --font-p: "Inter", sans-serif;
+  --font-note: "Inter", sans-serif;
+
+  /* FONT SIZES */
+  --size-navbar: 22px;
+  --size-btn: 18px;
+  --size-h1: 40px;
+  --size-h2: 25px;
+  --size-p: 18px;
+  --size-note: 15px;
 }
+
 @font-face {
   font-family: "OctopusGame";
   src: url("/src/assets/font/Octopus Game.ttf") format("truetype");

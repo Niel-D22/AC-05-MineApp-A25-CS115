@@ -1,10 +1,17 @@
 // app.js (Contoh file utama Express Anda)
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const port = 3000;
 
 // Import router dari auth.js
 const authRoutes = require("./routes/auth"); // Sesuaikan path jika berbeda
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Izinkan hanya frontend Anda
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Metode yang diizinkan
+  credentials: true, // Izinkan cookie atau header otorisasi
+}));
 
 // Middleware untuk parsing body (penting untuk POST request seperti login)
 app.use(express.json());

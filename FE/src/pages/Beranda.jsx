@@ -1,5 +1,7 @@
 import React from "react";
-import ImgHero from "../assets/Ai.png"
+import Hero from "../component/Beranda/Hero";
+import CardWarning from "../component/Beranda/CardWarning";
+import TornadoCard from "../assets/TornadoCard.png";
 
 const Beranda = () => {
   const recommendations = [
@@ -28,62 +30,33 @@ const Beranda = () => {
   return (
     <>
       <div className="px-25 text-white space-y-6">
-        {/* card panjang di awal beranda */}
-        <div className="text-[20px] max-w-[1340px] h-[209px] bg-[#2F2F2F] rounded-[20px] space-y-2 p-7">
-          <h1 className="text-[30px] font-bold ">
-            <span className="text-font ">Safety warning </span> due to weather
-            today
-          </h1>
-          <div className="w-180">
-            <p className="">
-              Limit the maximum speed of all Haul Trucks in Pit 2 to 20 km/h.
-            </p>
-            <p>Prioritize Grader G-02 to repair the road on Ramp 3B.</p>
-          </div>
-        </div>
-        {/* end card panjang di awal beranda */}
+        <Hero />
+        <CardWarning />
 
         {/* Card rekomendasi beranda scroll */}
-       <div className="flex gap-4 overflow-x-scroll overflow-y-hidden no-scrollbar">
-
+        <div className="flex gap-4 overflow-x-scroll overflow-y-hidden no-scrollbar">
           {recommendations.map((item) => (
             <div
               key={item.id}
-              className="min-w-[483px] h-[334px] bg-card rounded-[20px] p-6 pt-39 flex-shrink-0"
+              className="min-w-[483px] h-[334px] bg-card/50 border-1 border-stroke backdrop-blur-md rounded-[20px] p-6 pt-39 flex-shrink-0"
             >
-              <h1 className="text-[25px] font-bold">
+              <img
+                className="absolute right-0 top-23 -translate-y-1/2 h-[108PX] z-0 pr-10"
+                src={TornadoCard}
+                alt="Logo Topan"
+              />
+
+              <h1 className="text-[25px] font-h1">
                 The weather is <span className="text-font">{item.title}</span>
               </h1>
-              <p className="text-[18px] mt-2">{item.desc}</p>
-              <p className="text-end underline underline-offset-4 mt-4 cursor-pointer">
+              <p className="text-[18px] font-p mt-2">{item.desc}</p>
+              <p className="text-end font-p underline underline-offset-4 mt-4 cursor-pointer">
                 See more...
               </p>
             </div>
           ))}
         </div>
-
         {/* end Card rekomendasi beranda scroll */}
-
-        {/* /* bagian Hero Gambar Ai nya  */ }
-        <div className="bg-card w-full h-[456px] rounded-[20px] px-8 py-15 flex gap-60">
-        <div className=" space-y-11">
-          <div className="space-y-4">
-            <h1 className="text-[40px] font-bold w-90">
-              This is <span className="text-font">your AI Assistant.</span>
-            </h1>
-            <p className="w-110 text-[20px]">
-              Designed to help you out with some recomendations, analysis, data,
-              etc.
-            </p>
-          </div>
-          <button className="bg-primary rounded-[20px] p-3 text-[20px]">
-            Ask something
-          </button>
-        </div>
-        <img src={ImgHero} className="h-100" />
-
-        </div>
-        {/* end bagian Hero Gambar Ai nya  */}
       </div>
     </>
   );

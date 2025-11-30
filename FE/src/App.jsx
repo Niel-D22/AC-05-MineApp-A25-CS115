@@ -5,9 +5,10 @@ import Tanyakan from "./pages/Tanyakan";
 import Layout from "./Layout";
 import AnimasiMasuk from "./pages/Auth/AnimasiMasuk";
 import Auth from "./pages/Auth/Auth";
-
+import { AuthProvider } from './context/AuthContext';
 function App() {
   return (
+    <AuthProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AnimasiMasuk />} />
@@ -20,6 +21,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   );
 }
 
