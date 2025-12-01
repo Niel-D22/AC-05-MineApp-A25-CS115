@@ -144,16 +144,16 @@ const CardRekomendasi = () => {
                 width: "calc((100% - 2 * 24px) / 3)",
               }}
             >
-              <h2 className="text-xl font-bold text-font mb-3">{rec.title}</h2>
+              <h2 className="text-xl font-h2 font-bold text-font mb-3">{rec.title}</h2>
 
-              <h3 className="font-bold text-gray-300 mb-1">Hasil Analisis</h3>
+              <h3 className="font-bold font-h2 text-gray-300 mb-1">Hasil Analisis</h3>
               <ul className="list-disc pl-5 text-sm text-gray-300 mb-3">
-                {rec.analysis.map((item, i) => (
+              <p></p>  {rec.analysis.map((item, i) => (
                   <li key={i}>{item}</li>
                 ))}
               </ul>
 
-              <h3 className="font-bold text-gray-300 mb-1">Rekomendasi Aksi</h3>
+              <h3 className="font-bold font-h2 text-gray-300 mb-1">Rekomendasi Aksi</h3>
               <ul className="list-disc pl-5 text-sm text-gray-300 mb-4">
                 {rec.action.map((item, i) => (
                   <li key={i}>{item}</li>

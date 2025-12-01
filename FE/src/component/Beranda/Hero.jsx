@@ -1,25 +1,34 @@
-import React from 'react'
+import React from "react";
 import ImgHero from "../../assets/Ai.png";
+import { useNavigate } from "react-router-dom";
 const Hero = () => {
-  return (
-     <div className="bg-card/50 border-1 border-stroke backdrop-blur-md w-full h-[456px] rounded-[20px] px-8 py-15 flex gap-60">
-          <div className=" flex flex-col justify-center space-y-11">
-            <div className="space-y-4 ">
-              <h1 className="text-[40px] font-h1  ">
-                This is <span className="text-font">your AI Assistant.</span>
-              </h1>
-              <p className=" font-p  text-[15px]">
-                Designed to help you out with some recomendations, analysis,
-                data, etc.
-              </p>
-            </div>
-            <button className="bg-primary rounded-[20px] p-3 text-[18px] w-[213px]">
-              Ask something
-            </button>
-          </div>
-          <img src={ImgHero} className="max-h-100" />
-        </div>
-  )
-}
+  const navigate = useNavigate();
+  function GoToTanyakan() {
+    navigate("tanyakan");
+  }
 
-export default Hero
+  return (
+    <div className="bg-card/50 border-1 border-stroke backdrop-blur-md w-full h-[456px] rounded-[20px] px-8 py-15 flex gap-60">
+      <div className=" flex flex-col justify-center space-y-11">
+        <div className="space-y-4 ">
+          <h1 className="text-[40px] font-h1  ">
+            This is <span className="text-font">your AI Assistant.</span>
+          </h1>
+          <p className=" font-p  text-[15px]">
+            Designed to help you out with some recomendations, analysis, data,
+            etc.
+          </p>
+        </div>
+        <button
+          onClick={GoToTanyakan}
+          className="bg-primary rounded-[20px] p-3 text-[18px] w-[213px]"
+        >
+          Ask something
+        </button>
+      </div>
+      <img src={ImgHero} className="max-h-100" />
+    </div>
+  );
+};
+
+export default Hero;

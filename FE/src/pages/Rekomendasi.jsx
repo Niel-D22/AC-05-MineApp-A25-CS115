@@ -16,8 +16,8 @@ const Rekomendasi = () => {
 
   return (
     <div>
-      <div className="max-w-7xl text-white mx-auto mb-1 text-center">
-        <h1 className="text-2xl  font-semibold mb-6">
+      <div className="max-w-6xl text-white mx-auto mb-1 text-center">
+        <h1 className="text-2xl  font-h1 font-bold mb-6">
           Some plan recommendations that might help you
         </h1>
 
@@ -43,7 +43,7 @@ const Rekomendasi = () => {
                   : "text-gray-400 scale-100"
               }`}
             >
-              Rekomendasi
+              <p className="font-p">Rekomendasi</p>
             </button>
 
             <button
@@ -54,7 +54,7 @@ const Rekomendasi = () => {
                   : "text-gray-400 scale-100"
               }`}
             >
-              Informasi Data
+              <p className="font-p"> Informasi Data</p>
             </button>
           </div>
         </div>
