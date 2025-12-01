@@ -10,14 +10,15 @@ exports.login = (req, res) => {
     [username],
     async (err, result) => {
       if (err) return res.status(500).json({ message: "Server error" });
-      if (result.length === 0) return res.status(400).json({ message: "User tidak ditemukan" });
+      if (result.length === 0)
+        return res.status(400).json({ message: "User tidak ditemukan" });
 
       const user = result[0];
       const match = await bcrypt.compare(password, user.password);
       if (!match) return res.status(400).json({ message: "Password salah" });
 
       const token = jwt.sign(
-        { id: user.id, role: user.role },
+        { id: user.id, role: user.role, username: user.username },
         "SECRET_KEY",
         { expiresIn: "1d" }
       );
@@ -25,7 +26,7 @@ exports.login = (req, res) => {
       res.json({
         message: "Login sukses",
         token,
-        role: user.role
+        role: user.role,
       });
     }
   );

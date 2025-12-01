@@ -3,7 +3,7 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import BgBlur from "../../assets/BgBlur.png";
 import axios from "axios"; // Import axios
 import { useNavigate } from "react-router-dom"; // Tambah: Import useNavigate
-import { useAuth } from "../../context/AuthContext";
+import { UseAuth } from "../../context/AuthContext";
 
 const Auth = () => {
   const [loginData, setLoginData] = useState({
@@ -20,7 +20,7 @@ const Auth = () => {
 
   // Tambah: Hook Context dan Router
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login } = UseAuth();
   // Akhir Tambahan
 
   useEffect(() => {

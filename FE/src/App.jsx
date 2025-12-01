@@ -5,22 +5,26 @@ import Tanyakan from "./pages/Tanyakan";
 import Layout from "./Layout";
 import AnimasiMasuk from "./pages/Auth/AnimasiMasuk";
 import Auth from "./pages/Auth/Auth";
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from "./context/AuthContext";
+import Notifikasi from "./pages/Notifikasi";
+import Profile from "./pages/Profil";
 function App() {
   return (
     <AuthProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AnimasiMasuk />} />
-        <Route path="/auth" element={<Auth />} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AnimasiMasuk />} />
+          <Route path="/auth" element={<Auth />} />
 
-        <Route path="/home" element={<Layout />}>
-          <Route index element={<Beranda />} />
-          <Route path="rekomendasi" element={<Rekomendasi />} />
-          <Route path="tanyakan" element={<Tanyakan />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          <Route path="/home" element={<Layout />}>
+            <Route index element={<Beranda />} />
+            <Route path="rekomendasi" element={<Rekomendasi />} />
+            <Route path="tanyakan" element={<Tanyakan />} />
+            <Route path="notifikasi" element={<Notifikasi />} />
+            <Route path="profile" element={<Profile />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

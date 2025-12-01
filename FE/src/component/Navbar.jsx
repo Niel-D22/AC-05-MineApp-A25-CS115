@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import HeroMine from "../assets/LogoMine.png";
 import { IoNotifications } from "react-icons/io5";
 import { FaUserLarge } from "react-icons/fa6";
+import Logout from "./Logout";
 
 const Navbar = () => {
   return (
@@ -67,6 +68,7 @@ const Navbar = () => {
             >
               <FaUserLarge className="text-2xl" />
             </NavLink>
+            <Logout/>
             {/* icon */}
           </li>
         </ul>

@@ -6,4 +6,4 @@ async function makeHash(password) {
   console.log("HASH:", hash);
 }
 
-makeHash("shiping123");
+makeHash("main_daniel_12345");
