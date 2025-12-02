@@ -7,7 +7,6 @@ exports.getProfile = (req, res) => {
          return res.status(401).json({ message: "Data pengguna tidak ditemukan di request." });
     }
 
-    // --- SIMULASI Data Profil berdasarkan Role ---
     let profileData = {
         // name mengambil nilai asli dari JWT (username)
         name: user.username || 'Username Tidak Tersedia', 

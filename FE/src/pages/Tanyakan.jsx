@@ -58,10 +58,11 @@ const Tanyakan = () => {
 
         {/* SLIDE ANIMATION */}
         <div
-          className={`transition-all duration-300 overflow-hidden ${
+          className={`transition-all duration-300 overflow-visible ${
             slide ? "opacity-0 translate-x-10" : "opacity-100 translate-x-0"
           }`}
         >
+          <h1 className="text-3xl text-white font-bold">M.A.T.E.</h1>
           {page === "InputData" && <InputData />}
           {page === "Tanyakan" && <TanyakanAi />}
         </div>

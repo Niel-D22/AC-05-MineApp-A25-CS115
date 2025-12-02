@@ -50,8 +50,9 @@ Setelah semua *dependencies* diinstal dan *database* disiapkan:
 
 1.  Jalankan server Express Anda (asumsikan *file* utama Anda bernama `app.js` atau `server.js`):
     ```bash
-    node app.js
+    node Server.js
+
     # atau jika menggunakan Nodemon (disarankan untuk development):
-    # nodemon app.js 
+    # nodemon Server.js
     ```
 2.  Server akan berjalan dan siap menerima permintaan di **`http://localhost:3000`**.

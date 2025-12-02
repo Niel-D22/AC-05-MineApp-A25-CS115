@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UseAuth } from "../context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Tambahkan jika belum ada
+import Logout from "../component/Logout";
 
 const Profil = () => {
   const { userRole, token, logout } = UseAuth();
@@ -48,7 +49,6 @@ const Profil = () => {
   if (!profileData)
     return <div className="p-4 text-yellow-500">Silakan login.</div>;
 
-
   return (
     <div className="p-6 bg-gray-800 text-white rounded-lg shadow-xl max-w-md mx-auto">
       <h2 className="text-3xl font-bold mb-4 border-b pb-2 text-primary">
@@ -69,7 +69,6 @@ const Profil = () => {
 
         {userRole === "Main" && (
           <div className="bg-purple-900/40 p-3 rounded mt-4 border border-purple-700">
-          
             <p>
               <strong>Jabatan:</strong> {profileData.jabatan}
             </p>
@@ -79,13 +78,14 @@ const Profil = () => {
         {userRole === "Shipping" && (
           <div className="bg-blue-900/40 p-3 rounded mt-4 border border-blue-700">
             <p>
-              <strong>Jabatan:</strong> {profileData.jabatan} 
+              <strong>Jabatan:</strong> {profileData.jabatan}
             </p>
           </div>
         )}
       </div>
-
-    
+      <div className="mt-3">
+        <Logout />
+      </div>
     </div>
   );
 };

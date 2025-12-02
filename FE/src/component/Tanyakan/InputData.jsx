@@ -235,7 +235,7 @@ const InputData = () => {
   return (
     <div className="kode-mono min-h-screen p-1 ">
       <header className="text-center mb-7">
-        <h1 className="text-3xl text-white font-bold">M.A.T.E.</h1>
+       
         <p className="text-primary mt-2 text-xl">
           {" "}
           Input Data {userRole.toUpperCase()}
