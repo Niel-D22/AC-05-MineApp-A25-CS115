@@ -48,7 +48,7 @@ const recommendations = [
     ],
   },
   {
-    id: 3,
+    id: 4,
     title: "Prediksi Kerusakan Excavator EX-201",
     urgency: "Kritis",
     color: "red",

@@ -525,6 +525,31 @@ const RecommendationDisplay = ({
                         ${isOpen ? "max-h-[3000px] opacity-100 p-6" : "max-h-0 opacity-0 p-0"} 
                         bg-[#2d2d2d] border border-t-0 border-purple-500 rounded-b-xl`}
         >
+          
+          {/* --- KARTU REKOMENDASI TONASE --- */}
+          <h3 className="text-xl font-semibold mb-4 text-purple-400 border-t border-gray-700 pt-4">
+            💡 Opsi Rekomendasi (Optimasi Sumber Daya)
+          </h3>
+
+          <div className="flex space-x-4 overflow-x-auto pb-4">
+            {recommendations.map((item, index) => (
+              <RecommendationCard
+                key={index}
+                recommendation={item}
+                index={index}
+                onScenarioSelect={onScenarioSelect}
+              />
+            ))}
+          </div>  
+
+          {/* --- ANALISIS --- */}
+          <h4 className="text-lg font-semibold mb-2 text-white">
+            📝 Analisis Agent:
+          </h4>
+          <p className="text-sm text-gray-300 mb-6 italic">
+            {initial_analysis_text}
+          </p>
+
           {/* --- STATUS METRICS (Mirip dengan mining.html) --- */}
           <h3 className="text-xl font-semibold mb-3 text-purple-400">
             📊 Status Operasional Saat Ini
@@ -548,30 +573,6 @@ const RecommendationDisplay = ({
                 {initial_difference} Ton
               </p>
             </div>
-          </div>
-
-          {/* --- ANALISIS --- */}
-          <h4 className="text-lg font-semibold mb-2 text-white">
-            📝 Analisis Agent:
-          </h4>
-          <p className="text-sm text-gray-300 mb-6 italic">
-            {initial_analysis_text}
-          </p>
-
-          {/* --- KARTU REKOMENDASI TONASE --- */}
-          <h3 className="text-xl font-semibold mb-4 text-purple-400 border-t border-gray-700 pt-4">
-            💡 Opsi Rekomendasi (Optimasi Sumber Daya)
-          </h3>
-
-          <div className="flex space-x-4 overflow-x-auto pb-4">
-            {recommendations.map((item, index) => (
-              <RecommendationCard
-                key={index}
-                recommendation={item}
-                index={index}
-                onScenarioSelect={onScenarioSelect}
-              />
-            ))}
           </div>
 
           {/* --- FOOTER/ACTION AREA --- */}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import CardRekomendasi from "../component/Rekomendasi/CardRekomendasi";
-import InformasiData from "../component/Rekomendasi/InformasiData";
+import SummaryPlan from "../component/Rekomendasi/SummaryPlan";
 
 const Rekomendasi = () => {
   const [page, setPage] = useState("rekomendasi");
@@ -47,14 +47,14 @@ const Rekomendasi = () => {
             </button>
 
             <button
-              onClick={() => changePage("informasi")}
+              onClick={() => changePage("summary")}
               className={`ml-4 transition-all hover:scale-105 duration-200 ${
-                page === "informasi"
+                page === "summary"
                   ? "text-font scale-110"
                   : "text-gray-400 scale-100"
               }`}
             >
-              <p className="font-p"> Informasi Data</p>
+              <p className="font-p"> Summary Plan</p>
             </button>
           </div>
         </div>
@@ -66,7 +66,7 @@ const Rekomendasi = () => {
           }`}
         >
           {page === "rekomendasi" && <CardRekomendasi />}
-          {page === "informasi" && <InformasiData />}
+          {page === "summary" && <SummaryPlan />}
         </div>
       </div>
     </div>
