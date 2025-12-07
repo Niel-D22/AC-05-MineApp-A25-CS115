@@ -1,168 +1,141 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const recommendations = [
-  {
-    id: 1,
-    title: "Bahaya Slippery & Traksi Rendah",
-    urgency: "Kritis",
-    color: "red",
-    analysis: [
-      "Hujan lebat terdeteksi di Pit 2 & Ramp 3B.",
-      "AI memprediksi traksi jalan turun 35%.",
-      "Risiko unit selip meningkat drastis.",
-    ],
-    action: [
-      "Batasi kecepatan Haul Truck maks 20 km/jam.",
-      "Kirim Grader G-02 untuk perbaikan drainase Ramp 3B segera.",
-    ],
-  },
-  {
-    id: 2,
-    title: "Optimasi Kontrol Debu PM10",
-    urgency: "Sedang",
-    color: "orange",
-    analysis: [
-      "Angin kencang 40 km/jam dari Timur Laut.",
-      "Konsentrasi partikel debu (PM10) di Crusher 1 diprediksi melewati ambang batas dalam 15 menit.",
-    ],
-    action: [
-      "Aktifkan Water Sprayer otomatis di Crusher 1.",
-      "Alihkan rute Unit H-05 sementara waktu.",
-      "Alihkan rute Unit H-05 sementara waktu.",
-    ],
-  },
-  {
-    id: 3,
-    title: "Prediksi Kerusakan Excavator EX-201",
-    urgency: "Kritis",
-    color: "red",
-    analysis: [
-      "Sensor termal Excavator EX-201 mendeteksi overheat.",
-      "Pola getaran mesin tidak normal (>3mm/s).",
-      "Potensi Kerusakan mesin dalam 4 jam.",
-    ],
-    action: [
-      "Hentikan operasi EX-201 segera.",
-      "Hubungi tim mekanik untuk inspeksi hidrolik.",
-    ],
-  },
-  {
-    id: 4,
-    title: "Prediksi Kerusakan Excavator EX-201",
-    urgency: "Kritis",
-    color: "red",
-    analysis: [
-      "Sensor termal Excavator EX-201 mendeteksi overheat.",
-      "Pola getaran mesin tidak normal (>3mm/s).",
-      "Potensi Kerusakan mesin dalam 4 jam.",
-    ],
-    action: [
-      "Hentikan operasi EX-201 segera.",
-      "Hubungi tim mekanik untuk inspeksi hidrolik.",
-    ],
-  },
-];
+// Helper Sederhana untuk Label Cuaca
+const getWeatherLabel = (val) => {
+  // Menangani angka (0,1,2) atau text ("Sunny", dll)
+  if (val == 0 || val === "Light Rain") return "🌧️ Hujan";
+  if (val == 1 || val === "Cloudy") return "☁️ Berawan";
+  if (val == 2 || val === "Sunny") return "☀️ Cerah";
+  return val || "-";
+};
 
-const UrgencyTag = ({ urgency, color }) => {
-  let tagClasses = "";
-
-  switch (color) {
-    case "red":
-      tagClasses = "bg-red-600 text-white";
-      break;
-    case "orange":
-      tagClasses = "bg-orange-400 text-gray-900"; // Oranye untuk Sedang/Tinggi
-      break;
-    default:
-      tagClasses = "bg-gray-500 text-white";
-  }
-
+const UrgencyTag = ({ hasPlan }) => {
   return (
     <span
-      className={`px-3 py-1 text-xs font-semibold rounded-full uppercase tracking-wider ${tagClasses}`}
+      className={`px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wider border ${
+        hasPlan 
+          ? "bg-green-500/20 text-green-400 border-green-500/50" 
+          : "bg-gray-500/20 text-gray-400 border-gray-500/50"
+      }`}
     >
-      {urgency}
+      {hasPlan ? "Finalized" : "Draft"}
     </span>
   );
 };
 
-// Komponen Utama
 const CardRekomendasi = () => {
+  const [historyData, setHistoryData] = useState([]);
   const [index, setIndex] = useState(0);
 
+  useEffect(() => {
+    const savedHistory = localStorage.getItem("aiHistory");
+    if (savedHistory) {
+      setHistoryData(JSON.parse(savedHistory));
+    }
+  }, []);
+
   const visibleCards = 3;
-  const totalCards = recommendations.length;
+  const totalCards = historyData.length;
 
   const next = () => {
-    if (index < totalCards - visibleCards) {
-      setIndex(index + 1);
-    }
+    if (index < totalCards - visibleCards) setIndex(index + 1);
   };
 
   const prev = () => {
-    if (index > 0) {
-      setIndex(index - 1);
-    }
+    if (index > 0) setIndex(index - 1);
   };
 
+  if (historyData.length === 0) {
+    return (
+      <div className="text-center p-12 bg-[#2F2F2F]/30 rounded-xl border border-dashed border-gray-600 text-gray-500">
+        <p>Belum ada riwayat rekomendasi AI.</p>
+        <p className="text-sm mt-2">Lakukan analisis di halaman "Tanyakan" untuk mendapatkan rekomendasi.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative w-full max-w-7xl mx-auto p-6 sm:p-10">
-      {/* Tombol kiri */}
+    <div className="relative w-full max-w-7xl mx-auto p-4 sm:p-6">
+      {/* Tombol Navigasi */}
       {index > 0 && (
-        <button
-          onClick={prev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-purple-500 text-white px-3 py-2 rounded-lg z-20"
-        >
+        <button onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#AA14F0] text-white p-3 rounded-lg z-20 shadow-lg hover:bg-purple-700 transition">
           ‹
         </button>
       )}
-
-      {/* Tombol kanan */}
       {index < totalCards - visibleCards && (
-        <button
-          onClick={next}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-purple-500 text-white px-3 py-2 rounded-lg z-20"
-        >
+        <button onClick={next} className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#AA14F0] text-white p-3 rounded-lg z-20 shadow-lg hover:bg-purple-700 transition">
           ›
         </button>
       )}
 
-      {/* Slider container */}
-      <div className="overflow-hidden text-start">
+      <div className="overflow-hidden text-start py-4">
         <div
-          className="flex gap-6 transition-transform duration-300"
-          style={{
-            transform: `translateX(-${index * 100}%)`,
-          }}
+          className="flex gap-6 transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(-${index * (100 / 3 + 2)}%)` }} // Logic sliding yang lebih halus
         >
-          {recommendations.map((rec) => (
+          {historyData.map((item, i) => (
             <div
-              key={rec.id}
-              className="bg-card shrink-0 rounded-xl p-6 shadow-xl"
-              style={{
-                width: "calc((100% - 2 * 24px) / 3)",
-              }}
+              key={i}
+              className="bg-card-glass shrink-0 rounded-2xl p-6 shadow-xl border border-white/10 flex flex-col justify-between"
+              style={{ width: "calc((100% - 48px) / 3)", minHeight: "420px" }}
             >
-              <h2 className="text-xl font-h2 font-bold text-font mb-3">{rec.title}</h2>
+              <div>
+                {/* HEADER: Tanggal & Status */}
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-xs font-mono text-gray-400">{item.date}</span>
+                  <UrgencyTag hasPlan={!!item.summaryId} />
+                </div>
 
-              <h3 className="font-bold font-h2 text-gray-300 mb-1">Hasil Analisis</h3>
-              <ul className="list-disc pl-5 text-sm text-gray-300 mb-3">
-              <p></p>  {rec.analysis.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
+                {/* JUDUL */}
+                <h2 className="text-lg font-bold text-white mb-4 leading-tight line-clamp-2 min-h-[3.5rem]">
+                  {item.title}
+                </h2>
 
-              <h3 className="font-bold font-h2 text-gray-300 mb-1">Rekomendasi Aksi</h3>
-              <ul className="list-disc pl-5 text-sm text-gray-300 mb-4">
-                {rec.action.map((item, i) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
+                {/* STATUS OPERASIONAL (Baru) */}
+                <div className="bg-[#1a1a1a]/60 p-3 rounded-lg border border-white/5 mb-4">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-gray-400">Target</span>
+                    <span className="text-white font-bold">{item.target} Ton</span>
+                  </div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-gray-400">Output</span>
+                    <span className="text-yellow-400 font-bold">{item.prediction} Ton</span>
+                  </div>
+                  <div className="flex justify-between text-xs pt-1 border-t border-white/10">
+                    <span className="text-gray-400">Gap</span>
+                    <span className={`${parseInt(item.gap) > 0 ? "text-red-400" : "text-green-400"} font-bold`}>
+                      {item.gap} Ton
+                    </span>
+                  </div>
+                </div>
 
-              <div className="text-right">
-                <UrgencyTag urgency={rec.urgency} color={rec.color} />
+                {/* DETAIL RESOURCES */}
+                <h3 className="font-bold text-[#BC8CF2] mb-2 text-xs uppercase tracking-wider">Konfigurasi AI</h3>
+                <ul className="text-sm text-gray-300 space-y-2">
+                  <li className="flex items-center gap-2">
+                    <span>🚛</span> Truk: <span className="text-white font-semibold">{item.trucks} Unit</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span>🏗️</span> Ekskavator: <span className="text-white font-semibold">{item.excavators} Unit</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span>👷</span> Operator: <span className="text-white font-semibold">{item.operators} Orang</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span>🌦️</span> Cuaca: <span className="text-white font-semibold">{getWeatherLabel(item.weather)}</span>
+                  </li>
+                </ul>
               </div>
+
+              {/* FOOTER: ID LINK */}
+              {item.summaryId && (
+                <div className="mt-4 pt-4 border-t border-white/10">
+                  <p className="text-xs text-center text-gray-500 mb-1">Terhubung ke Summary Plan:</p>
+                  <div className="bg-[#AA14F0]/10 text-[#AA14F0] text-center text-xs font-mono py-1 rounded border border-[#AA14F0]/30">
+                    {item.summaryId}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, use } from "react";
 
 // --- Komponen/Helper Pendukung (Diambil dari InputData.jsx dan HasilRekomendasi.jsx) ---
 
@@ -669,6 +669,8 @@ const STEPS = {
 const Tanyakan = () => {
   const API_BASE = "http://localhost:8000";
 
+  const [currentSessionId, setCurrentSessionId] = useState(null);
+  const [selectedScenario, setSelectedScenario] = useState(null);
   // State untuk melacak langkah aplikasi saat ini
   const [currentStep, setCurrentStep] = useState(STEPS.INPUT);
   // State untuk menyimpan data respons API TERBARU
@@ -713,6 +715,32 @@ const Tanyakan = () => {
 
   // Fungsi yang dipanggil oleh InputData.jsx setelah berhasil memanggil API
   const handleInputDataProcessed = (data) => {
+    const sessionId = Date.now().toString();
+    setCurrentSessionId(sessionId);
+
+    const cardRecc = data.recommendations[0];
+
+    const newHistoryItem = {
+      sessionId: sessionId,
+      date: new Date().toLocaleDateString("en-GB"),
+      title: cardRecc.title,
+      trucks: cardRecc.trucks,
+      excavators: cardRecc.excavators,
+      operators: cardRecc.operators,
+      weather: cardRecc.weather,
+      target: data.target_tonnage,        
+      prediction: data.initial_prediction,  
+      gap: data.initial_difference,
+      analysis: data.initial_analysis_text, 
+      summaryId: null 
+    };
+
+    // Simpan ke LocalStorage 'aiHistory'
+    const existingHistory = JSON.parse(localStorage.getItem("aiHistory") || "[]");
+    localStorage.setItem("aiHistory", JSON.stringify([newHistoryItem, ...existingHistory]));
+    // -----------------------------------------------------
+
+    setApiResponseData({ ...data, status: "Calculated" });
     // 1. Tambahkan pesan awal ke chat (respon Agent)
     const initialBotMessage = {
       sender: "bot",
@@ -743,7 +771,7 @@ const Tanyakan = () => {
 
   // Fungsi yang dipanggil saat memilih skenario di RecommendationCard
   const handleScenarioSelection = (scenario) => {
-    // 1. Simpan data analisis LAMA ke riwayat sebelum diproses (Data Lama)
+    setSelectedScenario(scenario);
     if (apiResponseData) {
       setApiHistory((prev) => [
         ...prev,
@@ -879,17 +907,68 @@ const Tanyakan = () => {
 
   // Fungsi untuk simulasi Finalisasi
   const handleFinalize = () => {
-    // Pindahkan analisis terakhir ke riwayat sebelum finalisasi
-    if (apiResponseData && apiResponseData.status !== "Finalized") {
-      setApiHistory((prev) => [
-        ...prev,
-        { ...apiResponseData, id: prev.length + 1 },
-      ]);
+    // Validasi: Pastikan setidaknya sudah ada hasil analisis (kotak status sudah muncul)
+    if (!apiResponseData) {
+      alert("Silahkan lakukan input data dan analisis terlebih dahulu!");
+      return;
     }
-    // Set status data API menjadi Finalized
+
+    // Tentukan sumber data: Apakah dari Skenario Pilihan atau dari Input Awal (Default)
+    const finalTrucks = selectedScenario ? selectedScenario.trucks : apiResponseData.truckCount;
+    const finalExcavators = selectedScenario ? selectedScenario.excavators : apiResponseData.excavatorCount;
+    const finalOperators = selectedScenario ? selectedScenario.operators : apiResponseData.operatorCount;
+    const finalWeather = selectedScenario ? selectedScenario.weather : apiResponseData.weatherCondition;
+
+    const planId = `SP-${Math.floor(Math.random() * 10000)}`;
+    
+    // 1. Siapkan Data Plan Baru
+    const newPlan = {
+      id: `SP-${Math.floor(Math.random() * 10000)}`, // ID Plan, acak
+      date: new Date().toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' }),
+      type: "Mining",
+      prediction: apiResponseData.initial_prediction,
+      gap: apiResponseData.initial_difference,        
+      analysis: apiResponseData.initial_analysis_text,
+      trucks: finalTrucks,
+      excavators: finalExcavators,
+      operators: finalOperators,
+      weather: finalWeather,
+      
+      
+      status: "Finalized"
+    };
+
+    if (currentSessionId) {
+      const history = JSON.parse(localStorage.getItem("aiHistory") || "[]");
+      
+      // Cari sesi yang sedang aktif dan update summaryId-nya
+      const updatedHistory = history.map(item => {
+        if (item.sessionId === currentSessionId) {
+          return { ...item, summaryId: planId }; // Tautkan ID Plan di sini
+        }
+        return item;
+      });
+
+      localStorage.setItem("aiHistory", JSON.stringify(updatedHistory));
+    }
+
+    // 2. Ambil data lama dari LocalStorage (jika ada)
+    const existingPlans = JSON.parse(localStorage.getItem("finalizedPlans") || "[]");
+
+    // 3. Gabungkan data baru ke data lama
+    const updatedPlans = [newPlan, ...existingPlans];
+
+    // 4. Simpan kembali ke LocalStorage
+    localStorage.setItem("finalizedPlans", JSON.stringify(updatedPlans));
+
+    // 5. Update UI
+    if (apiResponseData && apiResponseData.status !== "Finalized") {
+      setApiHistory((prev) => [...prev, { ...apiResponseData, id: prev.length + 1 }]);
+    }
     setApiResponseData((prev) => ({ ...prev, status: "Finalized" }));
     setCurrentStep(STEPS.FINALIZATION);
-    alert("Proses Finalisasi Skenario Telah Diselesaikan!");
+
+    alert("Plan berhasil difinalisasi dan disimpan ke Summary Plan!");
   };
 
   // Render konten berdasarkan langkah saat ini
