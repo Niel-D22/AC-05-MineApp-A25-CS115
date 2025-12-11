@@ -48,9 +48,13 @@ const Auth = () => {
       );
 
       const { token, role } = response.data;
+      
+      localStorage.setItem("token", token); 
+      localStorage.setItem("role", role);
 
-      // GANTI DARI LOCAL STORAGE KE CONTEXT & REDIRECT
-      login(token, role);
+      if (login) { 
+          login(token, role); 
+      }
       navigate("/home", { replace: true });
       // END GANTI
     } catch (err) {

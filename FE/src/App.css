@@ -33,6 +33,91 @@
   src: url("/src/assets/font/Octopus Game.ttf") format("truetype");
 }
 
+@font-face {
+  font-family: "Syne";
+  src: url("/src/assets/font/Syne-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Syne";
+  src: url("/src/assets/font/Syne-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/src/assets/font/Inter_18pt-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/src/assets/font/Inter_18pt-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Archivo";
+  src: url("/src/assets/font/Archivo-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@layer utilities {
+  .heading-1 {
+    @apply font-h1 text-[40px] font-bold text-white leading-tight;
+  }
+
+  .heading-2 {
+    @apply font-h2 text-[22px] text-white leading-tight;
+  }
+
+  .btn-prim {
+    @apply font-btn text-[18px] text-white;
+  }
+
+  .body-text {
+    @apply font-p text-[18px] text-text-body leading-relaxed;
+  }
+
+  .note {
+    @apply font-note text-[15px] text-font leading-relaxed;
+  }
+
+  .notif {
+    @apply font-note text-[15px] text-notif leading-relaxed;
+  }
+
+  .date {
+    @apply font-note text-font text-xs bg-background px-2 py-1 rounded-lg;
+  }
+
+  .nav-link {
+    @apply font-navbar text-[18px] transition-colors duration-200;
+  }
+
+  .btn-prim {
+    @apply bg-primary text-white font-btn text-[length:var(--size-btn)] 
+          rounded-[20px] 
+          transition-all duration-200 
+          hover:scale-105 hover:cursor-pointer hover:bg-purple-700
+          max-w-fit py-2 px-6
+  }
+
+  .card {
+    @apply w-full  min-h-fit
+           px-10 py-10 
+           bg-card/50 
+           border border-stroke 
+           backdrop-blur-md rounded-[20px]; 
+  }
+}
+
 
 /* Sembunyikan scrollbar */
 ::-webkit-scrollbar {
@@ -88,7 +173,6 @@ body {
     filter: drop-shadow(0 0 12px #c69dff);
   }
 }
-
 
 
 .nav-item {

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef, use } from "react";
+import React, { useState, useEffect, useRef} from "react";
+import { UseAuth } from "../context/AuthContext";
+import axios from "axios";
 
 // --- Komponen/Helper Pendukung (Diambil dari InputData.jsx dan HasilRekomendasi.jsx) ---
 
@@ -82,12 +84,12 @@ const StepBar = ({ currentStep }) => {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="flex w-full h-4 rounded-lg overflow-hidden border border-gray-700">
+      <div className="flex w-full h-4 rounded-lg overflow-hidden gap-x-2 ">
         {steps.map((step, index) => (
           <div
             key={index}
             className={`h-full flex-1 transition-colors duration-300
-              ${index < completedSteps ? "bg-purple-600" : "bg-gray-800"}
+              ${index < completedSteps ? "bg-primary" : "bg-gray-700"}
               ${index < steps.length - 1 ? "border-r border-black border-opacity-30" : ""}
             `}
           ></div>
@@ -96,7 +98,7 @@ const StepBar = ({ currentStep }) => {
 
       <div className="flex justify-between mt-2">
         {steps.map((step, index) => (
-          <div key={index} className="w-1/3 text-center px-1">
+          <div key={index} className="w-1/3 text-center px-1 font-p hover:cursor-pointer">
             <p
               className={`text-sm font-medium whitespace-nowrap transition-colors duration-300 ${
                 index < completedSteps ? "text-purple-400" : "text-gray-500"
@@ -344,11 +346,11 @@ const InputData = ({ onDataProcessed }) => {
   return (
     <div className="kode-mono min-h-screen p-1 ">
       <header className="text-center mb-7">
-        <p className="text-primary mt-2 text-xl">
+        <p className="heading-1 mt-2 text-primary">
           {" "}
-          Input Data {userRole.toUpperCase()}
+          Input Data : Role {userRole}
         </p>
-        <p className="text-gray-400 text-sm">User ID Sesi: {userId}</p>
+        <p className="note">User ID Sesi: {userId}</p>
       </header>
 
       <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
@@ -668,6 +670,7 @@ const STEPS = {
 
 const Tanyakan = () => {
   const API_BASE = "http://localhost:8000";
+  const { userRole } = UseAuth();
 
   const [currentSessionId, setCurrentSessionId] = useState(null);
   const [selectedScenario, setSelectedScenario] = useState(null);
@@ -717,12 +720,19 @@ const Tanyakan = () => {
   const handleInputDataProcessed = (data) => {
     const sessionId = Date.now().toString();
     setCurrentSessionId(sessionId);
+    setSelectedScenario(null);
 
     const cardRecc = data.recommendations[0];
+
+    let planType = "Mining"
+    if (userRole === 'Shipping' || userRole === 'ShippingPlanner' || userRole === 'Shipping Planner') {
+      planType = "Shipping";
+    }
 
     const newHistoryItem = {
       sessionId: sessionId,
       date: new Date().toLocaleDateString("en-GB"),
+      type: planType,
       title: cardRecc.title,
       trucks: cardRecc.trucks,
       excavators: cardRecc.excavators,
@@ -906,12 +916,17 @@ const Tanyakan = () => {
   };
 
   // Fungsi untuk simulasi Finalisasi
-  const handleFinalize = () => {
+  const handleFinalize = async () => {
     // Validasi: Pastikan setidaknya sudah ada hasil analisis (kotak status sudah muncul)
     if (!apiResponseData) {
       alert("Silahkan lakukan input data dan analisis terlebih dahulu!");
       return;
     }
+
+    const finalDataSource = selectedScenario || apiResponseData;
+    const finalTitle = selectedScenario 
+        ? selectedScenario.title 
+        : (apiResponseData.recommendations && apiResponseData.recommendations[0]?.title) || "Analisis Mining Plan";
 
     // Tentukan sumber data: Apakah dari Skenario Pilihan atau dari Input Awal (Default)
     const finalTrucks = selectedScenario ? selectedScenario.trucks : apiResponseData.truckCount;
@@ -919,13 +934,22 @@ const Tanyakan = () => {
     const finalOperators = selectedScenario ? selectedScenario.operators : apiResponseData.operatorCount;
     const finalWeather = selectedScenario ? selectedScenario.weather : apiResponseData.weatherCondition;
 
+    let planType = "Mining";
+
+    if (userRole === "Main" || userRole === "MiningPlanner") {
+      planType = "Mining";
+    } else if (userRole === "Shipping" || userRole === "ShippingPlanner") {
+      planType = "Shipping";
+    }
+
     const planId = `SP-${Math.floor(Math.random() * 10000)}`;
     
     // 1. Siapkan Data Plan Baru
     const newPlan = {
       id: `SP-${Math.floor(Math.random() * 10000)}`, // ID Plan, acak
       date: new Date().toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' }),
-      type: "Mining",
+      type: planType,
+      title: finalTitle,
       prediction: apiResponseData.initial_prediction,
       gap: apiResponseData.initial_difference,        
       analysis: apiResponseData.initial_analysis_text,
@@ -933,22 +957,43 @@ const Tanyakan = () => {
       excavators: finalExcavators,
       operators: finalOperators,
       weather: finalWeather,
-      
-      
       status: "Finalized"
     };
 
+    try {
+        const token = localStorage.getItem("token"); // Ambil token auth
+        if (token) {
+            await axios.post("http://localhost:3000/api/notifications", {
+                title: "Plan Finalized",
+                message: `Sebuah ${planType} Plan baru (ID: ${planId}) telah berhasil dibuat dan disetujui.`,
+                type: "alert", // Bisa 'alert' atau 'info'
+                reference_id: planId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            console.log("Notifikasi terkirim ke database");
+        }
+    } catch (error) {
+        console.error("Gagal mengirim notifikasi:", error);
+        // Kita tidak throw error agar proses finalisasi di UI tetap jalan meskipun notif gagal
+    }
+
     if (currentSessionId) {
       const history = JSON.parse(localStorage.getItem("aiHistory") || "[]");
-      
-      // Cari sesi yang sedang aktif dan update summaryId-nya
       const updatedHistory = history.map(item => {
         if (item.sessionId === currentSessionId) {
-          return { ...item, summaryId: planId }; // Tautkan ID Plan di sini
+          return { 
+            ...item, 
+            summaryId: planId,
+            title: finalTitle, 
+            trucks: finalTrucks,
+            excavators: finalExcavators,
+            operators: finalOperators,
+            weather: finalWeather
+          };
         }
         return item;
       });
-
       localStorage.setItem("aiHistory", JSON.stringify(updatedHistory));
     }
 
@@ -968,7 +1013,7 @@ const Tanyakan = () => {
     setApiResponseData((prev) => ({ ...prev, status: "Finalized" }));
     setCurrentStep(STEPS.FINALIZATION);
 
-    alert("Plan berhasil difinalisasi dan disimpan ke Summary Plan!");
+    alert(`Plan berhasil difinalisasi dan disimpan ke ${planType} Summary Plan!`);
   };
 
   // Render konten berdasarkan langkah saat ini

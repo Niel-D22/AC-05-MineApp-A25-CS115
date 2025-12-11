@@ -7,6 +7,7 @@ const port = 3000;
 // Import router dari auth.js
 const authRoutes = require("./routes/auth"); // Sesuaikan path jika berbeda
 const userRoutes = require("./routes/UserRoutes"); // <--- Import Router Baru
+const notificationRoutes = require("./routes/notificationRoutes");
 
 app.use(
   cors({
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRoutes);
 app.use("/api", userRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.listen(port, () => {
   console.log(`Server berjalan di http://localhost:${port}`);

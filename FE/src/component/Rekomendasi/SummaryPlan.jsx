@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 // Helper untuk ikon cuaca (Sederhana)
 const getWeatherLabel = (val) => {
@@ -9,8 +10,15 @@ const getWeatherLabel = (val) => {
 };
 
 const SummaryPlan = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("mining");
   const [allPlans, setAllPlans] = useState([]);
+
+  useEffect(() => {
+      if (location.state && location.state.activeTab) {
+        setActiveTab(location.state.activeTab);
+      }
+    }, [location.state]);
 
   useEffect(() => {
     const savedPlans = localStorage.getItem("finalizedPlans");
@@ -35,30 +43,29 @@ const SummaryPlan = () => {
     <div className="w-full animate-fade-in-up pb-20">
       {/* Header & Tabs */}
       <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
-        <div>
-          <h2 className="text-3xl font-bold text-white font-syne">Finalized Summary Plan</h2>
-          <p className="text-gray-400 mt-1 font-inter">
+        <div className="flex flex-col items-center w-full gap-y-4">
+          <h2 className="heading-1">Finalized Summary Plan</h2>
+          <p className="note">
             Riwayat rencana kerja yang telah disetujui.
           </p>
-        </div>
-
-        <div className="flex bg-[#2F2F2F] p-1 rounded-lg border border-gray-700">
-          <button
-            onClick={() => setActiveTab("mining")}
-            className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${
-              activeTab === "mining" ? "bg-[#AA14F0] text-white shadow-lg" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Mining Plan
-          </button>
-          <button
-            onClick={() => setActiveTab("shipping")}
-            className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${
-              activeTab === "shipping" ? "bg-[#AA14F0] text-white shadow-lg" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Shipping Plan
-          </button>
+          <div className="flex bg-[#181818] p-2 rounded-lg">
+            <button
+              onClick={() => setActiveTab("mining")}
+              className={`px-6 py-2 rounded-md transition-all ${
+                activeTab === "mining" ? "bg-primary body-text !text-sm shadow-lg" : "body-text !text-gray-400 !text-sm hover:text-white hover:cursor-pointer"
+              }`}
+            >
+              Mining Plan
+            </button>
+            <button
+              onClick={() => setActiveTab("shipping")}
+              className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${
+                activeTab === "shipping" ? "bg-primary body-text !text-sm shadow-lg" : "body-text !text-gray-400 !text-sm hover:text-white hover:cursor-pointer"
+              }`}
+            >
+              Shipping Plan
+            </button>
+          </div>
         </div>
       </div>
 
@@ -68,21 +75,21 @@ const SummaryPlan = () => {
           filteredData.map((plan, index) => (
             <div 
               key={index} 
-              className="bg-[#2F2F2F]/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl hover:border-[#AA14F0]/50 transition-all duration-300"
+              className="card rounded-lg"
             >
               {/* 1. HEADER: ID - TITLE - TANGGAL */}
               <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
-                <div className="flex gap-x-10">
-                  <h3 className="text-xl font-bold text-white font-syne">
+                <div className="flex gap-x-10 items-center">
+                  <h3 className="heading-2">
                   <span className="text-[#AA14F0] font-mono mr-2">{plan.id}</span>
                     - Summary Plan
                   </h3>
-                  <p className="text-sm text-gray-400 mt-1 font-inter">
+                  <p className="date">
                     Dibuat pada: {plan.date}
                   </p>
                 </div>
-                <div className="flex gap-x-10">
-                  <div className="flex items-center px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-bold border border-green-500/30">
+                <div className="flex gap-x-10 items-center">
+                  <div className="flex date h-fit">
                     {plan.status || "Finalized"}
                   </div>
                   <button
@@ -96,38 +103,50 @@ const SummaryPlan = () => {
 
               {/* 2. HASIL ANALISIS */}
               <div className="mb-6">
-                <h4 className="text-sm font-bold text-gray-300 uppercase mb-2">📝 Hasil Analisis Agent</h4>
-                <div className="bg-black/20 p-4 rounded-xl border border-white/5">
-                  <p className="text-gray-300 text-sm leading-relaxed italic">
+                <h4 className="heading-2 !text-font my-4">📝 Hasil Analisis Agent</h4>
+                <div className="bg-white/5 p-3 rounded-lg mb-4">
+                  <p className="body-text">
                     "{plan.analysis || "Tidak ada data analisis detail."}"
                   </p>
                 </div>
               </div>
 
               {/* 3. DETAIL RESOURCES (GRID 4 KOLOM) */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <ResourceItem label="Truk" value={`${plan.trucks || 0} Unit`} icon="🚛" color="text-blue-400" />
-                <ResourceItem label="Ekskavator" value={`${plan.excavators || 0} Unit`} icon="🏗️" color="text-yellow-400" />
-                <ResourceItem label="Operator" value={`${plan.operators || 0} Orang`} icon="👷" color="text-orange-400" />
-                <ResourceItem label="Cuaca" value={getWeatherLabel(plan.weather)} icon="🌦️" color="text-cyan-400" />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="flex flex-col bg-white/5 p-3 rounded-lg mb-4 gap-x-4">
+                  <span className="body-text !text-font">Truk</span>
+                  <span className="body-text">🚛{`${plan.trucks || 0} Unit`}</span>
+                </div>
+                <div className="flex flex-col bg-white/5 p-3 rounded-lg mb-4 gap-x-4">
+                  <span className="body-text !text-font">Ekskavator</span>
+                  <span className="body-text">🏗️{`${plan.excavators || 0} Unit`}</span>
+                </div>
+                <div className="flex flex-col bg-white/5 p-3 rounded-lg mb-4 gap-x-4">
+                  <span className="body-text !text-font">Operator</span>
+                  <span className="body-text">👷{`${plan.operators || 0} Orang`}</span>
+                </div>
+                <div className="flex flex-col bg-white/5 p-3 rounded-lg mb-4 gap-x-4">
+                  <span className="body-text !text-font">Cuaca</span>
+                  <span className="body-text">🌦️{getWeatherLabel(plan.weather)}</span>
+                </div>
               </div>
 
               {/* 4. STATUS OPERASIONAL SAAT INI */}
               <div>
-                <h4 className="text-sm font-bold text-gray-300 uppercase mb-3">📊 Status Operasional Saat Ini</h4>
-                <div className="grid grid-cols-3 gap-4 bg-[#1a1a1a]/50 p-4 rounded-xl border border-white/10">
+                <h4 className="heading-2 !text-font my-4">📊 Status Operasional Saat Ini</h4>
+                <div className="grid grid-cols-3 gap-4 bg-white/5 p-3 rounded-lg mb-4">
                   <div className="text-center border-r border-white/10">
-                    <p className="text-xs text-gray-500 mb-1">Target</p>
+                    <p className="body-text !text-font">Target</p>
                     {/* Tambahkan " Ton" di sini */}
-                    <p className="text-lg font-bold text-white">{plan.target} Ton</p> 
+                    <p className="body-text">{plan.target} Ton</p> 
                   </div>
                   <div className="text-center border-r border-white/10">
-                    <p className="text-xs text-gray-500 mb-1">Prediksi</p>
-                    <p className="text-lg font-bold text-yellow-400">{plan.prediction} Ton</p>
+                    <p className="body-text !text-font">Prediksi</p>
+                    <p className="body-text">{plan.prediction} Ton</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">Gap (Selisih)</p>
-                    <p className={`text-lg font-bold ${parseInt(plan.gap) > 0 ? "text-red-400" : "text-green-400"}`}>
+                    <p className="body-text !text-font">Gap (Selisih)</p>
+                    <p className={`body-text ${parseInt(plan.prediction) > (plan.target) ? "!text-red-400" : "!text-green-400"}`}>
                       {plan.gap} Ton
                     </p>
                   </div>

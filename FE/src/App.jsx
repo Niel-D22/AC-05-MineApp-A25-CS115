@@ -8,6 +8,7 @@ import Auth from "./pages/Auth/Auth";
 import { AuthProvider } from "./context/AuthContext";
 import Notifikasi from "./pages/Notifikasi";
 import Profile from "./pages/Profil";
+import SummaryPlan from "./component/Rekomendasi/SummaryPlan";
 function App() {
   return (
     <AuthProvider>
@@ -22,6 +23,7 @@ function App() {
             <Route path="tanyakan" element={<Tanyakan />} />
             <Route path="notifikasi" element={<Notifikasi />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="summary-plan" element={<SummaryPlan />} />
           </Route>
         </Routes>
       </BrowserRouter>
