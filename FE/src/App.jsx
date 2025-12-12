@@ -9,6 +9,9 @@ import { AuthProvider } from "./context/AuthContext";
 import Notifikasi from "./pages/Notifikasi";
 import Profile from "./pages/Profil";
 import SummaryPlan from "./component/Rekomendasi/SummaryPlan";
+import UserGuide from "./pages/UserGuide";
+import ITSupport from "./pages/ITSupport";
+import ReportBug from "./pages/ReportBug";
 function App() {
   return (
     <AuthProvider>
@@ -24,6 +27,9 @@ function App() {
             <Route path="notifikasi" element={<Notifikasi />} />
             <Route path="profile" element={<Profile />} />
             <Route path="summary-plan" element={<SummaryPlan />} />
+            <Route path="docs" element={<UserGuide />} />
+            <Route path="support" element={<ITSupport />} />
+            <Route path="feedback" element={<ReportBug />} />
           </Route>
         </Routes>
       </BrowserRouter>

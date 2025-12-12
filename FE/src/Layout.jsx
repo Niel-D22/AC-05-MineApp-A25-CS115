@@ -1,20 +1,30 @@
-import Navbar from "./component/Navbar"
-import { Outlet } from "react-router-dom"
-import BgMain from "./assets/bgMain.png"
-import Footer from "./component/Footer"
+import React from "react";
+import { Outlet, useLocation } from "react-router-dom"; // Tambah useLocation
+import Navbar from "./component/Navbar"; // Sesuaikan path Navbar Anda
+import Footer from "./component/Footer"; // Sesuaikan path Footer Anda
+import { AnimatePresence } from "framer-motion"; // Import ini
 
-function MainLayout() {
+const Layout = () => {
+  const location = useLocation(); // Dapatkan lokasi saat ini
+
   return (
-    <div 
-    className="bg-cover bg-center bg-fixed min-h-screen space-y-10"
-    style={{ backgroundImage: `url(${BgMain})` }}>
+    <div className="flex flex-col min-h-screen bg-[#121212]">
       <Navbar />
-      <div className="p-4">
-        <Outlet  />
-      </div>
-      <Footer/>
-    </div>
-  )
-}
+      
+      {/* Konten Utama */}
+      <main className="flex-1 relative">
+        {/* mode="wait" artinya: tunggu halaman lama hilang, baru munculkan yg baru */}
+        <AnimatePresence mode="wait">
+          {/* Key sangat PENTING: Agar React tahu halaman berubah */}
+          <div key={location.pathname}>
+             <Outlet />
+          </div>
+        </AnimatePresence>
+      </main>
 
-export default MainLayout
+      <Footer />
+    </div>
+  );
+};
+
+export default Layout;

@@ -168,25 +168,16 @@ const Auth = () => {
           </button>
         </div>
 
-        {/* SLIDING PANEL (TIDAK ADA PERUBAHAN) */}
-        <div
-          className={`absolute top-0 w-1/2 h-full bg-primary text-white flex flex-col items-center justify-center transition-all duration-500 ${
-            isSignUp ? "right-1/2" : "right-0"
-          }`}
-        >
-          <h1 className="text-[60px] font-[OctopusGame] tracking-widest">
-            MATE
-          </h1>
-          <p className="mb-6">
-            {isSignUp ? "Sudah punya akun?" : "Belum punya akun?"}
-          </p>
-          <button
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="px-6 py-2 bg-white text-purple-700 rounded font-bold hover:bg-gray-100"
-          >
-            {isSignUp ? "Login" : "Sign Up"}
-          </button>
-        </div>
+    <div
+  className={`absolute top-0 w-1/2 h-full bg-primary text-white flex flex-col items-center justify-center transition-all duration-500 ${
+    isSignUp ? "right-1/2" : "right-0"
+  }`}
+>
+  <h1 className="text-[60px] font-[OctopusGame] tracking-widest">
+    MATE
+  </h1>
+</div>
+
       </div>
     </div>
   );

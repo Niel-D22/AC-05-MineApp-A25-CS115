@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CardRekomendasi from "../component/Rekomendasi/CardRekomendasi";
 import SummaryPlan from "../component/Rekomendasi/SummaryPlan";
+import PageTransition from "../component/PageTransition";
 
 const Rekomendasi = () => {
   const [page, setPage] = useState("rekomendasi");
@@ -15,6 +16,7 @@ const Rekomendasi = () => {
   };
 
   return (
+    <PageTransition>
     <div>
       <div className="max-w-6xl text-white mx-auto mb-1 text-center">
         <h2 className="heading-2 mb-6">
@@ -70,6 +72,7 @@ const Rekomendasi = () => {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import PageTransition from "../component/PageTransition";
 
 const Notifikasi = () => {
   const [notifications, setNotifications] = useState([]);
@@ -100,6 +101,7 @@ const Notifikasi = () => {
 
   // --- RENDER TAMPILAN ---
   return (
+    <PageTransition>
     <div className="min-h-screen text-white p-6 pb-24">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
@@ -176,6 +178,7 @@ const Notifikasi = () => {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 };
 

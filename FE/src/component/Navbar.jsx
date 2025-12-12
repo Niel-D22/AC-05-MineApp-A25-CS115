@@ -37,81 +37,67 @@ const Navbar = () => {
     return () => clearInterval(interval); // Bersihkan interval saat komponen di-unmount
   }, []);
 
-  return (
-    <div
-      className="backdrop-blur-md sticky top-0 z-50 font-navbar
-     flex justify-between items-center px-30 h-[91px]
-      bg-[#2F2F2F]/50 text-white border-b-1 border-stroke"
-    >
-      <div className="flex justify-center items-center gap-6">
-        <img className="h-13" src={HeroMine} alt="" />
-        <h1 className="font-[OctopusGame] text-white text-4xl logoGlow">
+ return (
+    <div className="backdrop-blur-md sticky top-0 z-50 flex justify-between items-center px-10 md:px-20 h-[91px] bg-[#2F2F2F]/80 text-white border-b border-white/10 shadow-lg">
+      
+      {/* Logo Area */}
+      <div className="flex justify-center items-center gap-4">
+        <img className="h-10 md:h-12" src={HeroMine} alt="Logo" />
+        <h1 className="font-bold text-2xl md:text-3xl tracking-widest text-white drop-shadow-md">
           MATE
         </h1>
       </div>
+
+      {/* Navigation Area */}
       <div>
-        <ul className="flex">
-          <li className="space-x-10 flex items-center nav-link">
-            <NavLink
-              to="/home"
-              end
-              className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
-              }
-            >
+        <ul className="flex items-center gap-8 md:gap-10">
+          
+          {/* Menu Biasa */}
+          <li>
+            <NavLink to="/home" end className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
               Beranda
             </NavLink>
+          </li>
 
-            <NavLink
-              to="/home/rekomendasi"
-              className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
-              }
-            >
+          <li>
+            <NavLink to="/home/rekomendasi" className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
               Rekomendasi
             </NavLink>
+          </li>
 
-            <NavLink
-              to="/home/tanyakan"
-              className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
-              }
-            >
+          <li>
+            <NavLink to="/home/tanyakan" className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
               Tanyakan
             </NavLink>
+          </li>
 
-            {/* --- BAGIAN NOTIFIKASI DENGAN BADGE --- */}
-            <NavLink
-              to="/home/notifikasi"
-              className={({ isActive }) =>
-                `nav-item relative ${isActive ? "active" : ""}`
-              }
+          {/* Menu Icon: Notifikasi */}
+          <li>
+            <NavLink 
+              to="/home/notifikasi" 
+              className={({ isActive }) => `nav-item flex items-center justify-center ${isActive ? "active" : ""}`}
             >
-              <div className="relative">
+              <div className="relative p-1"> {/* Bungkus Icon agar badge posisinya pas */}
                 <IoNotifications className="text-2xl" />
                 
-                {/* Tampilkan Badge jika ada notifikasi belum dibaca */}
+                {/* Badge Notifikasi */}
                 {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                    {/* Efek Ping (Animasi Berdenyut) */}
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#AA14F0] opacity-75"></span>
-                    {/* Lingkaran Utama */}
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#AA14F0]"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-600 border border-[#2F2F2F]"></span>
                   </span>
                 )}
               </div>
             </NavLink>
-            {/* --------------------------------------- */}
+          </li>
 
-            <NavLink
-              to="/home/profile"
-              className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
-              }
-            >
-              <FaUserLarge className="text-2xl" />
+          {/* Menu Icon: Profil */}
+          <li>
+            <NavLink to="/home/profile" className={({ isActive }) => `nav-item flex items-center justify-center ${isActive ? "active" : ""}`}>
+              <FaUserLarge className="text-xl" />
             </NavLink>
           </li>
+
         </ul>
       </div>
     </div>
