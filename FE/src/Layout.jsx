@@ -3,12 +3,14 @@ import { Outlet, useLocation } from "react-router-dom"; // Tambah useLocation
 import Navbar from "./component/Navbar"; // Sesuaikan path Navbar Anda
 import Footer from "./component/Footer"; // Sesuaikan path Footer Anda
 import { AnimatePresence } from "framer-motion"; // Import ini
-
+import BgMain from "./assets/bgMain.png"
 const Layout = () => {
   const location = useLocation(); // Dapatkan lokasi saat ini
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#121212]">
+       <div 
+    className="bg-cover bg-center bg-fixed min-h-screen space-y-10"
+    style={{ backgroundImage: `url(${BgMain})` }}>
       <Navbar />
       
       {/* Konten Utama */}
