@@ -134,7 +134,7 @@ const UserGuide = () => {
     <div className="w-full max-w-4xl mx-auto pb-20 animate-fade-in-up">
       {/* Header Dokumentasi */}
       <div className="text-center mb-10 pt-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1 note  tracking-wider mb-4">
+        <div className="inline-flex items-center gap-2 px-4 py-1 note tracking-wider mb-4">
           <MdTipsAndUpdates /> Internal Documentation 
         </div>
         <h1 className="heading-2 mb-4">

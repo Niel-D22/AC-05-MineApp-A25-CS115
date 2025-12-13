@@ -59,8 +59,8 @@ Mohon segera diperbaiki. Terima kasih.
   };
 
   // --- STYLING ---
-  const labelStyle = "block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1";
-  const inputStyle = "w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all shadow-inner";
+  const labelStyle = "small-text";
+  const inputStyle = "w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 !text-sm small-text placeholder-gray-600 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all shadow-inner";
 
   return (
     <PageTransition>
@@ -75,8 +75,8 @@ Mohon segera diperbaiki. Terima kasih.
             <MdBugReport size={32}/>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Laporkan Bug</h1>
-            <p className="text-gray-400 text-sm mt-1">
+            <h1 className="heading-2 tracking-tight">Laporkan Bug</h1>
+            <p className="small-text mt-1">
               Temukan error? Kirim laporan langsung ke Developer via Email.
             </p>
           </div>
@@ -86,7 +86,7 @@ Mohon segera diperbaiki. Terima kasih.
           
           {/* --- KOLOM KIRI: FORMULIR --- */}
           <div className="lg:w-2/3">
-            <div className="bg-[#1e1e1e] border border-white/5 rounded-2xl p-8 shadow-xl relative overflow-hidden">
+            <div className="card relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
 
               <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
@@ -126,7 +126,7 @@ Mohon segera diperbaiki. Terima kasih.
                 {/* Baris 2: Severity Level */}
                 <div>
                     <label className={labelStyle}>Seberapa Parah?</label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2 small-text">
                         <SeverityOption label="Low" desc="Typo / UI" color="bg-blue-500" value="low" current={formData.severity} onClick={(v) => setFormData({...formData, severity: v})} />
                         <SeverityOption label="Medium" desc="Fitur Terganggu" color="bg-yellow-500" value="medium" current={formData.severity} onClick={(v) => setFormData({...formData, severity: v})} />
                         <SeverityOption label="High" desc="Fitur Rusak" color="bg-orange-500" value="high" current={formData.severity} onClick={(v) => setFormData({...formData, severity: v})} />
@@ -164,7 +164,13 @@ Mohon segera diperbaiki. Terima kasih.
                   <button 
                     type="submit" 
                     disabled={loading}
-                    className="flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-red-900/20 transition transform active:scale-95 disabled:opacity-70 disabled:cursor-wait w-full md:w-auto justify-center"
+                    className="flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold shadow-lg shadow-red-900/20 transition transform active:scale-95 disabled:opacity-70 disabled:cursor-wait w-full md:w-auto justify-center font-btn text-[length:var(--size-btn)] 
+                    rounded-[20px] 
+                    transition-all duration-200 
+                    hover:scale-105
+                    hover:cursor-pointer
+                    disabled:scale-none
+                    max-w-fit py-2 px-6"
                   >
                     {loading ? (
                         <span className="flex items-center gap-2">Memproses...</span>
@@ -185,12 +191,12 @@ Mohon segera diperbaiki. Terima kasih.
           <div className="lg:w-1/3 space-y-6">
             
             {/* Widget Tips */}
-            <div className="bg-[#18181b] border border-white/5 rounded-2xl p-6 relative overflow-hidden">
+            <div className="card border-none p-6 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                <h3 className="text-blue-400 font-bold mb-4 flex items-center gap-2 text-sm uppercase tracking-wide">
-                    <MdInfoOutline className="text-lg"/> Tips Laporan
+                <h3 className="!text-blue-400 font-bold mb-4 flex items-center gap-2 body-text uppercase tracking-wide">
+                    <MdInfoOutline/> Tips Laporan
                 </h3>
-                <ul className="space-y-4 text-sm text-gray-400">
+                <ul className="space-y-4 text-sm small-text">
                     <li className="flex gap-3 items-start">
                         <span className="text-blue-500 font-bold">✓</span>
                         <span>Jelaskan <strong>apa yang Anda lakukan</strong> sebelum error muncul.</span>
@@ -207,15 +213,15 @@ Mohon segera diperbaiki. Terima kasih.
             </div>
 
             {/* Widget Kontak Developer */}
-            <div className="bg-[#18181b] border border-white/5 rounded-2xl p-6">
-                <p className="text-xs text-gray-500 uppercase font-bold mb-3 tracking-widest">Kontak Developer</p>
+            <div className="card p-6">
+                <p className="small-text tracking-widest mb-4">Kontak Developer</p>
                 <a href="mailto:danielwarouw01@gmail.com" className="flex items-center gap-4 bg-[#0a0a0a] p-4 rounded-xl border border-white/5 hover:border-red-500/30 hover:bg-white/5 transition group">
                     <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 group-hover:bg-red-500 group-hover:text-white transition">
                         <MdEmail size={20} />
                     </div>
                     <div>
-                        <p className="text-xs text-gray-400 mb-0.5">Email Support</p>
-                        <p className="text-sm font-bold text-white group-hover:text-red-400 transition break-all">danielwarouw01@gmail.com</p>
+                        <p className="small-text mb-0.5">Email Support</p>
+                        <p className="body-text !text-sm !group-hover:text-red-400 transition break-all">danielwarouw01@gmail.com</p>
                     </div>
                 </a>
             </div>

@@ -1,62 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { MdDelete } from "react-icons/md";
+import { ConfirmModal, Toast } from "../CostumAlerts";
 
-// --- 1. IMPORT ICONS (Material Design) ---
-import { 
-  MdDeleteOutline, 
-  MdLocalShipping,    // Icon Truk
-  MdConstruction,     // Icon Ekskavator
-  MdEngineering,      // Icon Operator
-  MdDirectionsBoat,   // Icon Kapal (Transport)
-  MdInventory2,       // Icon Stock
-  MdAccessTime,       // Icon Loading Time
-  MdWbSunny,          // Icon Cerah
-  MdCloud,            // Icon Berawan
-  MdGrain,            // Icon Hujan
-  MdWarning,          // Icon Warning
-  MdCheckCircle       // Icon Success
-} from "react-icons/md";
+const DeleteModal = ({ isOpen, onClose, onConfirm, isAll }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 w-screen h-screen">
+      <div 
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        onClick={onClose}
+      ></div>
+      <div className="relative bg-[#1e1e1e] border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-all">
+        <h3 className="heading-2 !text-red-500 mb-2">Konfirmasi Hapus</h3>
+        <p className="!text-gray-400 body-text !text-sm mb-6">
+          {isAll 
+            ? "Tindakan ini akan menghapus SEMUA data pada kategori ini." 
+            : "Data yang dihapus tidak dapat dikembalikan."}
+        </p>
+        <div className="flex justify-center gap-4">
+          <button onClick={onClose} className="px-4 py-2 font-note text-gray-400 hover:text-white transition hover:cursor-pointer">
+            Batal
+          </button>
+          <button onClick={onConfirm} className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-note shadow-lg transition transform active:scale-95 hover:cursor-pointer">
+            Ya, Hapus
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-// --- 2. IMPORT CUSTOM ALERTS ---
-// Pastikan file CustomAlerts.jsx sudah dibuat di folder component/UI/
-import { Toast, ConfirmModal } from "../../component/CostumAlerts";
-
-// --- HELPER: ICON CUACA ---
-const getWeatherIcon = (val) => {
-  // Mapping nilai string atau angka ke Icon
-  if (val == 0 || val === "Rain" || val === "Light Rain") {
-    return <div className="flex items-center gap-2 text-blue-300"><MdGrain className="text-xl"/> <span className="text-sm">Hujan</span></div>;
-  }
-  if (val == 1 || val === "Cloudy") {
-    return <div className="flex items-center gap-2 text-gray-400"><MdCloud className="text-xl"/> <span className="text-sm">Berawan</span></div>;
-  }
-  if (val == 2 || val === "Sunny") {
-    return <div className="flex items-center gap-2 text-yellow-400"><MdWbSunny className="text-xl"/> <span className="text-sm">Cerah</span></div>;
-  }
-  return <div className="flex items-center gap-2 text-white"><MdWarning className="text-xl"/> <span className="text-sm">{val || "-"}</span></div>;
+const getWeatherLabel = (val) => {
+  if (val == 0 || val === "Rain") return "🌧️ Hujan";
+  if (val == 1 || val === "Cloudy") return "☁️ Berawan";
+  if (val == 2 || val === "Sunny") return "☀️ Cerah";
+  return val;
 };
 
 const SummaryPlan = () => {
   const location = useLocation();
-  
-  // --- STATES ---
   const [activeTab, setActiveTab] = useState("mining");
   const [allPlans, setAllPlans] = useState([]);
   
-  // State untuk Alert Kustom
-  const [toast, setToast] = useState(null); // format: { message, type }
-  const [deleteModal, setDeleteModal] = useState({ open: false, id: null });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
-  // --- EFFECTS ---
-  
-  // 1. Cek navigasi dari halaman lain (jika ada state activeTab dikirim)
   useEffect(() => {
       if (location.state && location.state.activeTab) {
         setActiveTab(location.state.activeTab);
       }
     }, [location.state]);
 
-  // 2. Load data dari LocalStorage saat component mount
   useEffect(() => {
     const savedPlans = localStorage.getItem("finalizedPlans");
     if (savedPlans) {
@@ -64,250 +59,170 @@ const SummaryPlan = () => {
     }
   }, []);
 
-  // --- HANDLERS ---
-
-  // Buka Modal Konfirmasi Hapus
-  const requestDelete = (id) => {
-    setDeleteModal({ open: true, id });
+  const promptDeleteOne = (id) => { setDeleteTarget(id); setModalOpen(true); };
+  const promptDeleteCategory = () => { 
+      setDeleteTarget(activeTab === 'mining' ? 'cat_mining' : 'cat_shipping'); 
+      setModalOpen(true); 
   };
 
-  // Eksekusi Hapus setelah dikonfirmasi di Modal
-  const confirmDelete = () => {
-    const idToDelete = deleteModal.id;
-    
-    // Filter data (hapus ID yang dipilih)
-    const updatedPlans = allPlans.filter(plan => plan.id !== idToDelete);
-    
-    // Update State & LocalStorage
-    setAllPlans(updatedPlans);
-    localStorage.setItem("finalizedPlans", JSON.stringify(updatedPlans));
-    
-    // Reset Modal & Tampilkan Toast Sukses
-    setDeleteModal({ open: false, id: null });
-    setToast({ message: "Plan berhasil dihapus dari riwayat.", type: "success" });
+  const executeDelete = () => {
+    let newPlans = [...allPlans];
+    if (deleteTarget === 'cat_mining') {
+        newPlans = allPlans.filter(p => (p.type || "Mining") === "Shipping");
+    } else if (deleteTarget === 'cat_shipping') {
+        newPlans = allPlans.filter(p => (p.type || "Mining") !== "Shipping");
+    } else {
+        newPlans = allPlans.filter(p => p.id !== deleteTarget);
+    }
+    setAllPlans(newPlans);
+    localStorage.setItem("finalizedPlans", JSON.stringify(newPlans));
+    setModalOpen(false);
   };
 
-  // Filter Data berdasarkan Tab (Mining / Shipping)
-  const filteredData = allPlans.filter(
-    (item) => (item.type || 'Mining').toLowerCase() === activeTab
-  );
+  const filteredData = allPlans.filter((item) => {
+      const type = item.type || "Mining";
+      return activeTab === "mining" ? type !== "Shipping" : type === "Shipping";
+  });
 
   return (
     <div className="w-full animate-fade-in-up pb-20">
-      
-      {/* --- KOMPONEN ALERT GLOBAL (Overlay) --- */}
-      {toast && (
-        <Toast 
-          message={toast.message} 
-          type={toast.type} 
-          onClose={() => setToast(null)} 
-        />
-      )}
-      
-      <ConfirmModal 
-        isOpen={deleteModal.open}
-        title="Hapus Summary Plan?"
-        message={`Apakah Anda yakin ingin menghapus data Plan ID: ${deleteModal.id}? Data yang dihapus tidak dapat dikembalikan.`}
-        onConfirm={confirmDelete}
-        onCancel={() => setDeleteModal({ open: false, id: null })}
-        confirmText="Ya, Hapus"
-        cancelText="Batal"
-        isDanger={true}
+      <DeleteModal 
+        isOpen={modalOpen} 
+        onClose={() => setModalOpen(false)} 
+        onConfirm={executeDelete} 
+        isAll={deleteTarget && deleteTarget.toString().startsWith('cat_')}
       />
 
-      {/* --- HEADER & TABS --- */}
-      <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
         <div className="flex flex-col items-center w-full gap-y-4">
           <h2 className="heading-1">Finalized Summary Plan</h2>
-          <p className="note text-center max-w-lg">
-            Daftar rencana kerja operasional yang telah divalidasi oleh Agent AI dan disetujui untuk eksekusi.
+          <p className="note">
+            Riwayat rencana kerja yang telah disetujui.
           </p>
-          
-          {/* Switcher Tab */}
-          <div className="flex bg-[#181818] p-1.5 rounded-xl border border-white/5">
-            <button
-              onClick={() => setActiveTab("mining")}
-              className={`px-8 py-2.5 rounded-lg transition-all duration-300 font-medium ${
-                activeTab === "mining" 
-                  ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20" 
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              Mining Plan
+          <div className="flex flex-col items-center gap-3">
+            <div className="flex bg-[#181818] p-2 rounded-lg">
+                <button
+                onClick={() => setActiveTab("mining")}
+                className={`px-6 py-2 rounded-md transition-all ${
+                    activeTab === "mining" ? "bg-primary body-text !text-sm shadow-lg" : "body-text !text-gray-400 !text-sm hover:text-white hover:cursor-pointer"
+                }`}
+                >
+                Mining Plan
+                </button>
+                <button
+                onClick={() => setActiveTab("shipping")}
+                className={`px-6 py-2 rounded-md text-sm font-bold transition-all ${
+                    activeTab === "shipping" ? "bg-primary body-text !text-sm shadow-lg" : "body-text !text-gray-400 !text-sm hover:text-white hover:cursor-pointer"
+                }`}
+                >
+                Shipping Plan
+                </button>
+            </div>
+          </div>
+          <div className="flex justify-end w-full">
+                {filteredData.length > 0 && (
+            <button onClick={promptDeleteCategory} className="note !text-red-400 hover:bg-red-500/10 hover:cursor-pointer px-3 py-1 rounded flex    items-center gap-1 transition border border-red-800">
+                <MdDelete /> Hapus Semua {activeTab === "mining" ? "Mining" : "Shipping"}
             </button>
-            <button
-              onClick={() => setActiveTab("shipping")}
-              className={`px-8 py-2.5 rounded-lg transition-all duration-300 font-medium ${
-                activeTab === "shipping" 
-                  ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20" 
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              Shipping Plan
-            </button>
+          )}
           </div>
         </div>
       </div>
 
-      {/* --- LIST KARTU SUMMARY PLAN --- */}
-      <div className="space-y-6 max-w-5xl mx-auto">
+      <div className="space-y-6">
         {filteredData.length > 0 ? (
           filteredData.map((plan, index) => {
-            
-            // --- LOGIKA MAPPING UNTUK TAMPILAN KARTU ---
-            // Menentukan label dan icon berdasarkan tipe plan (Mining vs Shipping)
-            const isShipping = (plan.type || '').toLowerCase() === 'shipping';
-            
-            // Konfigurasi Kolom 1
-            const col1 = isShipping 
-                ? { label: "Stockpile", val: plan.stock, icon: <MdInventory2 className="text-orange-400 text-xl"/>, unit: "Ton" }
-                : { label: "Unit Truk", val: plan.trucks, icon: <MdLocalShipping className="text-red-400 text-xl"/>, unit: "Unit" };
-
-            // Konfigurasi Kolom 2
-            const col2 = isShipping 
-                ? { label: "Transport", val: plan.transport_capacity, icon: <MdDirectionsBoat className="text-blue-400 text-xl"/>, unit: "Ton" }
-                : { label: "Ekskavator", val: plan.excavators, icon: <MdConstruction className="text-yellow-400 text-xl"/>, unit: "Unit" };
-
-            // Konfigurasi Kolom 3
-            const col3 = isShipping 
-                ? { label: "Loading Time", val: plan.loading_time, icon: <MdAccessTime className="text-purple-400 text-xl"/>, unit: "Jam" }
-                : { label: "Operator", val: plan.operators, icon: <MdEngineering className="text-green-400 text-xl"/>, unit: "Orang" };
-
-            // Hitung Gap Logic (Untuk warna)
-            // Asumsi: Jika Prediksi < Target = Merah (Kurang). Jika Prediksi >= Target = Hijau (Aman).
-            const isGapBad = parseFloat(plan.prediction) < parseFloat(plan.target || plan.target_tonnage);
+            const isShipping = activeTab === "shipping";
+            const config = isShipping ? {
+                u: "Transport", a: "Stockpile", s: "Loading",
+                iconU: "🚛", iconA: "📦", iconS: "⏱️",
+                unitA: "Ton", unitS: "Jam"
+            } : {
+                u: "Truk", a: "Ekskavator", s: "Operator",
+                iconU: "🚛", iconA: "🏗️", iconS: "👷",
+                unitA: "Unit", unitS: "Org"
+            };
 
             return (
-              <div key={index} className="bg-[#1e1e1e] border border-white/5 rounded-xl p-6 hover:border-purple-500/30 transition-colors shadow-xl">
-                
-                {/* 1. HEADER KARTU */}
-                <div className="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${isShipping ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'}`}>
-                            {plan.type || 'Mining'}
-                        </span>
-                        <h3 className="text-lg font-bold text-white font-mono">
-                            {plan.id}
-                        </h3>
-                    </div>
-                    <p className="text-xs text-gray-400">
-                      Dibuat pada: <span className="text-gray-300">{plan.date}</span>
+                <div key={index} className="card rounded-lg">
+                <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
+                    <div className="flex gap-x-10 items-center">
+                    <h3 className="heading-2">
+                    <span className="text-[#AA14F0] font-mono mr-2">{plan.id}</span>
+                        - Summary Plan
+                    </h3>
+                    <p className="date">
+                        Dibuat pada: {plan.date}
                     </p>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold">
-                      <MdCheckCircle /> {plan.status || "Finalized"}
                     </div>
-                    
-                    {/* Tombol Hapus dengan Icon */}
-                    <button
-                      onClick={() => requestDelete(plan.id)}
-                      className="text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-all"
-                      title="Hapus Plan Ini"
-                    >
-                      <MdDeleteOutline size={20} />
-                    </button>
-                  </div>
+                    <div className="flex gap-x-10 items-center">
+                    <div className="flex date h-fit">
+                        {plan.status || "Finalized"}
+                    </div>
+                    <button onClick={() => promptDeleteOne(plan.id)} className="text-gray-500 hover:text-red-500 p-2 rounded-full hover:bg-white/5 transition hover:cursor-pointer">
+                            <MdDelete size={20} />
+                        </button>
+                    </div>
                 </div>
 
-                {/* 2. HASIL ANALISIS */}
                 <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-gray-400 mb-2 flex items-center gap-2">
-                    📝 Analisis AI Agent
-                  </h4>
-                  <div className="bg-black/20 p-4 rounded-lg border border-white/5">
-                    <p className="text-sm text-gray-300 italic leading-relaxed">
-                      "{plan.analysis || "Tidak ada data analisis detail."}"
+                    <h4 className="heading-2 !text-font my-4">📝 Hasil Analisis Agent</h4>
+                    <div className="bg-white/5 p-3 rounded-lg mb-4">
+                    <p className="body-text">
+                        "{plan.analysis || "Tidak ada data analisis detail."}"
                     </p>
-                  </div>
+                    </div>
                 </div>
 
-                {/* 3. DETAIL RESOURCES (GRID 4 KOLOM) */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                  {/* Resource 1 */}
-                  <div className="bg-[#2a2a2a] p-3 rounded-lg border border-white/5">
-                    <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">{col1.label}</p>
-                    <div className="flex items-center gap-2">
-                        {col1.icon}
-                        <span className="text-white font-bold">{col1.val || 0} <span className="text-xs font-normal text-gray-400">{col1.unit}</span></span>
-                    </div>
-                  </div>
-
-                  {/* Resource 2 */}
-                  <div className="bg-[#2a2a2a] p-3 rounded-lg border border-white/5">
-                    <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">{col2.label}</p>
-                    <div className="flex items-center gap-2">
-                        {col2.icon}
-                        <span className="text-white font-bold">{col2.val || 0} <span className="text-xs font-normal text-gray-400">{col2.unit}</span></span>
-                    </div>
-                  </div>
-
-                  {/* Resource 3 */}
-                  <div className="bg-[#2a2a2a] p-3 rounded-lg border border-white/5">
-                    <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">{col3.label}</p>
-                    <div className="flex items-center gap-2">
-                        {col3.icon}
-                        <span className="text-white font-bold">{col3.val || 0} <span className="text-xs font-normal text-gray-400">{col3.unit}</span></span>
-                    </div>
-                  </div>
-
-                  {/* Resource 4 (Cuaca) */}
-                  <div className="bg-[#2a2a2a] p-3 rounded-lg border border-white/5">
-                    <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">Cuaca</p>
-                    <div className="mt-1">
-                        {getWeatherIcon(plan.weather)}
-                    </div>
-                  </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <ResourceItem label={config.u} value={`${plan.trucks || 0} Unit`} icon={config.iconU} />
+                    <ResourceItem label={config.a} value={`${plan.excavators || 0} ${config.unitA}`} icon={config.iconA} />
+                    <ResourceItem label={config.s} value={`${plan.operators || 0} ${config.unitS}`} icon={config.iconS} />
+                    <ResourceItem label="Cuaca" value={getWeatherLabel(plan.weather)} icon="🌦️" />
                 </div>
 
-                {/* 4. STATUS OPERASIONAL (Footer Grid) */}
-                <div className="border-t border-white/10 pt-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    
+                <div>
+                    <h4 className="heading-2 !text-font my-4">📊 Status Operasional Saat Ini</h4>
+                    <div className="grid grid-cols-3 gap-4 bg-white/5 p-3 rounded-lg mb-4">
+                    <div className="text-center border-r border-white/10">
+                        <p className="body-text !text-font">Target</p>
+                        <p className="body-text">{plan.target} Ton</p> 
+                    </div>
+                    <div className="text-center border-r border-white/10">
+                        <p className="body-text !text-font">Prediksi</p>
+                        <p className="body-text">{plan.prediction} Ton</p>
+                    </div>
                     <div className="text-center">
-                      <p className="text-xs text-gray-500 mb-1">Target</p>
-                      <p className="text-lg font-bold text-white">
-                        {plan.target || plan.target_tonnage || 0} <span className="text-xs font-normal text-gray-400">Ton</span>
-                      </p> 
+                        <p className="body-text !text-font">Gap (Selisih)</p>
+                        <p className={`body-text ${parseInt(plan.prediction) > (plan.target) ? "!text-red-400" : "!text-green-400"}`}>
+                        {plan.gap} Ton
+                        </p>
                     </div>
-
-                    <div className="text-center border-l border-r border-white/10">
-                      <p className="text-xs text-gray-500 mb-1">Prediksi Output</p>
-                      <p className="text-lg font-bold text-yellow-400">
-                        {plan.prediction} <span className="text-xs font-normal text-gray-400">Ton</span>
-                      </p>
                     </div>
-
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 mb-1">Gap (Selisih)</p>
-                      <p className={`text-lg font-bold ${isGapBad ? "text-red-500" : "text-green-500"}`}>
-                        {plan.gap} <span className="text-xs font-normal text-gray-400">Ton</span>
-                      </p>
-                    </div>
-
-                  </div>
                 </div>
 
-              </div>
+                </div>
             );
           })
         ) : (
-          // --- EMPTY STATE ---
-          <div className="flex flex-col items-center justify-center p-16 bg-[#1e1e1e] rounded-xl border border-dashed border-gray-700">
-            <div className="bg-gray-800 p-4 rounded-full mb-4 text-gray-500">
-                {activeTab === 'mining' ? <MdLocalShipping size={40}/> : <MdDirectionsBoat size={40}/>}
-            </div>
-            <p className="text-gray-300 text-lg font-medium">Belum ada {activeTab === 'mining' ? 'Mining' : 'Shipping'} Plan.</p>
-            <p className="text-gray-500 text-sm mt-2 max-w-xs text-center">
-                Silakan lakukan analisis di halaman "Tanyakan", pilih skenario terbaik, dan klik Finalisasi.
-            </p>
+          <div className="text-center p-12 bg-[#2F2F2F]/30 rounded-xl border border-dashed border-gray-600">
+            <h2 className="heading-2">Belum ada {activeTab === "mining" ? "Mining" : "Shipping"} Plan yang difinalisasi.</h2>
+            <p className="body-text !text-sm">Silakan lakukan analisis di halaman "Tanyakan" dan klik Finalisasi.</p>
           </div>
         )}
       </div>
     </div>
   );
 };
+
+const ResourceItem = ({ label, value, icon }) => (
+  <div className="bg-[#2F2F2F] p-3 rounded-lg border border-white/5 flex items-center gap-3">
+    <span className="text-xl">{icon}</span>
+    <div>
+      <p className="text-xs text-gray-500 font-bold uppercase">{label}</p>
+      <p className={`font-bold text-white`}>{value}</p>
+    </div>
+  </div>
+);
 
 export default SummaryPlan;

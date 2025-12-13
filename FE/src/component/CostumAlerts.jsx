@@ -1,76 +1,86 @@
 import React, { useEffect } from "react";
 import { MdCheckCircle, MdError, MdInfo, MdWarning, MdClose } from "react-icons/md";
 
-// --- 1. TOAST NOTIFICATION (Pesan Melayang) ---
+// --- 1. TOAST NOTIFICATION (Pojok Kanan Atas) ---
 export const Toast = ({ message, type = "info", onClose }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
-    }, 3000); // Hilang otomatis setelah 3 detik
+    }, 3000);
     return () => clearTimeout(timer);
   }, [onClose]);
 
   const config = {
-    success: { bg: "bg-green-600", icon: <MdCheckCircle size={24}/>, title: "Berhasil" },
-    error:   { bg: "bg-red-600", icon: <MdError size={24}/>, title: "Error" },
-    warning: { bg: "bg-yellow-600", icon: <MdWarning size={24}/>, title: "Peringatan" },
-    info:    { bg: "bg-blue-600", icon: <MdInfo size={24}/>, title: "Info" },
+    success: { bg: "bg-green-500/10", border: "border-green-500/50", text: "text-green-400", icon: <MdCheckCircle /> },
+    error: { bg: "bg-red-500/10", border: "border-red-500/50", text: "text-red-400", icon: <MdError /> },
+    warning: { bg: "bg-yellow-500/10", border: "border-yellow-500/50", text: "text-yellow-400", icon: <MdWarning /> },
+    info: { bg: "bg-blue-500/10", border: "border-blue-500/50", text: "text-blue-400", icon: <MdInfo /> },
   };
 
   const style = config[type] || config.info;
 
   return (
-    <div className="fixed top-5 right-5 z-50 animate-fade-in-down">
-      <div className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-2xl text-white ${style.bg} border border-white/10 min-w-[300px]`}>
-        <div className="shrink-0">{style.icon}</div>
-        <div className="flex-1">
-          <h4 className="font-bold text-sm">{style.title}</h4>
-          <p className="text-sm opacity-90">{message}</p>
-        </div>
-        <button onClick={onClose} className="hover:bg-white/20 p-1 rounded-full transition">
-          <MdClose size={18}/>
-        </button>
-      </div>
+    <div className={`fixed top-6 right-6 z-[10000] flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-2xl animate-fade-in-down ${style.bg} ${style.border} ${style.text}`}>
+      <span className="text-xl">{style.icon}</span>
+      <p className="text-sm font-medium pr-2">{message}</p>
+      <button onClick={onClose} className="hover:opacity-70 transition"><MdClose /></button>
     </div>
   );
 };
 
-// --- 2. CONFIRM MODAL (Popup Konfirmasi) ---
-export const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, confirmText="Ya, Lanjutkan", cancelText="Batal", isDanger=false }) => {
+// --- 2. CONFIRM MODAL (Full Screen Overlay + Center) ---
+export const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, isDanger = false, confirmText = "Ya, Hapus" }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="bg-[#1e1e1e] border border-gray-700 w-full max-w-md rounded-xl shadow-2xl p-6 transform scale-100 transition-transform">
-        <div className="flex items-center gap-3 mb-4">
-          <div className={`p-3 rounded-full ${isDanger ? "bg-red-500/20 text-red-500" : "bg-primary/20 text-primary"}`}>
-            {isDanger ? <MdWarning size={28}/> : <MdInfo size={28}/>}
-          </div>
-          <h3 className="text-xl font-bold text-white">{title}</h3>
-        </div>
+    // WRAPPER UTAMA: Mengunci seluruh layar (Viewport)
+    // 'fixed inset-0' -> Menempel ke 4 sudut layar browser
+    // 'z-[9999]' -> Memastikan di lapisan paling atas (di atas Navbar dll)
+    // 'flex items-center justify-center' -> Memaksa konten (kotak modal) ke TENGAH
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center w-full h-full p-4">
+      
+      {/* OVERLAY BACKGROUND */}
+      {/* Gelap & Blur di belakang modal */}
+      <div 
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" 
+        onClick={onCancel} // Klik area gelap untuk menutup
+      ></div>
+      
+      {/* KOTAK MODAL */}
+      {/* 'relative z-10' -> Agar muncul di depan overlay */}
+      <div className="relative z-10 bg-[#1e1e1e] border border-white/10 w-full max-w-sm rounded-2xl p-6 shadow-2xl transform transition-all scale-100 animate-pop-in">
         
-        <p className="text-gray-300 mb-8 leading-relaxed">
+        {/* Header */}
+        <h3 className={`text-xl font-bold mb-2 ${isDanger ? "text-red-400" : "text-white"}`}>
+          {title}
+        </h3>
+        
+        {/* Pesan */}
+        <p className="text-gray-400 text-sm mb-6 leading-relaxed">
           {message}
         </p>
 
+        {/* Tombol Aksi */}
         <div className="flex justify-end gap-3">
-          <button 
+          <button
             onClick={onCancel}
-            className="px-5 py-2.5 rounded-lg text-gray-300 font-medium hover:bg-white/5 transition"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5 transition border border-transparent"
           >
-            {cancelText}
+            Batal
           </button>
-          <button 
+          
+          <button
             onClick={onConfirm}
-            className={`px-5 py-2.5 rounded-lg text-white font-bold shadow-lg transition transform active:scale-95 flex items-center gap-2 ${
+            className={`px-5 py-2 rounded-lg text-sm font-bold text-white shadow-lg transition-transform active:scale-95 flex items-center gap-2 ${
               isDanger 
-                ? "bg-red-600 hover:bg-red-700" 
-                : "bg-purple-600 hover:bg-purple-700"
+                ? "bg-red-600 hover:bg-red-500 shadow-red-900/20" 
+                : "bg-[#AA14F0] hover:bg-[#9a12d9] shadow-purple-900/20"
             }`}
           >
             {confirmText}
           </button>
         </div>
+
       </div>
     </div>
   );

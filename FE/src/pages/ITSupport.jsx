@@ -55,8 +55,8 @@ Mohon bantuannya. Terima kasih.
   };
 
   // --- STYLING ---
-  const labelStyle = "block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1";
-  const inputStyle = "w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all shadow-inner";
+  const labelStyle = "small-text";
+  const inputStyle = "w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 !text-sm small-text placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all shadow-inner";
 
   return (
     <PageTransition>
@@ -67,13 +67,13 @@ Mohon bantuannya. Terima kasih.
         
         {/* --- HEADER --- */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 note tracking-wider mb-4">
             <MdInfoOutline /> Pusat Bantuan Teknis
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+          <h1 className="heading-2 mb-3">
             IT Support Center
           </h1>
-          <p className="text-gray-400 max-w-xl mx-auto text-sm leading-relaxed">
+          <p className="small-text max-w-xl mx-auto text-sm leading-relaxed">
             Butuh akses khusus, request fitur baru, atau pertanyaan umum? <br/>Tim IT kami siap membantu kebutuhan operasional Anda.
           </p>
         </div>
@@ -84,8 +84,8 @@ Mohon bantuannya. Terima kasih.
           <div className="lg:col-span-1 space-y-6">
             
             {/* Kartu Kontak */}
-            <div className="bg-[#1e1e1e] border border-white/5 rounded-2xl p-6 shadow-lg">
-              <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-widest border-b border-white/5 pb-2">
+            <div className="card  p-6 ">
+              <h3 className="body-text mb-4">
                 Kontak Langsung
               </h3>
               
@@ -114,11 +114,11 @@ Mohon bantuannya. Terima kasih.
 
             {/* Quick Info Box */}
             <div className="bg-gradient-to-br from-purple-900/40 to-blue-900/20 border border-purple-500/20 rounded-2xl p-6 text-center">
-              <p className="text-sm text-purple-300 font-bold mb-2">Lupa Password Akun?</p>
-              <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+              <p className="note mb-2">Lupa Password Akun?</p>
+              <p className="note !text-xs leading-relaxed my-2">
                 Untuk reset password akun korporat, silakan hubungi admin via WhatsApp atau ajukan tiket "Akses Akun".
               </p>
-              <a href="https://wa.me/628386490650" target="_blank" rel="noreferrer" className="text-xs bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-lg transition shadow-lg inline-block">
+              <a href="https://wa.me/628386490650" target="_blank" rel="noreferrer" className="btn-prim !text-xs transition shadow-lg inline-block">
                 Hubungi Admin
               </a>
             </div>
@@ -126,7 +126,7 @@ Mohon bantuannya. Terima kasih.
 
           {/* --- KOLOM KANAN: FORM TIKET --- */}
           <div className="lg:col-span-2">
-            <div className="bg-[#1e1e1e] border border-white/5 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+            <div className="card relative overflow-hidden">
               
               {/* Background Glow */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
@@ -134,7 +134,7 @@ Mohon bantuannya. Terima kasih.
               <div className="relative z-10">
                 <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
                   <span className="p-2 rounded-lg bg-purple-500/20 text-purple-400"><MdSend size={20}/></span>
-                  Buat Tiket Bantuan
+                  <span className="heading-2">Buat Tiket Bantuan</span>
                 </h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -155,7 +155,7 @@ Mohon bantuannya. Terima kasih.
                   {/* Kategori (Bug Dihapus, diganti opsi lain) */}
                   <div>
                     <label className={labelStyle}>Kategori</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 body-text">
                       <RadioOption 
                         label="Akses Akun" 
                         value="access" 
@@ -204,7 +204,10 @@ Mohon bantuannya. Terima kasih.
                     <button 
                       type="submit" 
                       disabled={loading}
-                      className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-purple-900/20 transition transform active:scale-95 disabled:opacity-50 disabled:cursor-wait w-full md:w-auto justify-center"
+                      className="flex items-center gap-2 bg-primary text-white font-btn text-[length:var(--size-btn)] 
+                      rounded-[20px] text-white px-8 py-3.5transition-all duration-200 
+                      hover:scale-105 hover:cursor-pointer hover:bg-purple-700
+                      max-w-fit py-2 px-6 transition transform active:scale-95 disabled:opacity-50 disabled:cursor-wait disabled:scale-none w-full md:w-auto justify-center"
                     >
                       {loading ? "Memproses..." : <><MdSend /> Kirim via Gmail / Email</>}
                     </button>
@@ -229,15 +232,15 @@ const ContactCard = ({ icon, bgIcon, title, value, action, link }) => (
     href={link} 
     target="_blank" 
     rel="noreferrer" 
-    className="flex items-center gap-4 p-4 rounded-xl bg-[#0a0a0a] border border-white/5 hover:bg-white/5 hover:border-purple-500/30 transition group"
+    className="flex items-center gap-4 p-4 card border-none !py-6 !px-4 transition group"
   >
     <div className={`w-10 h-10 flex items-center justify-center rounded-full ${bgIcon}`}>
       {icon}
     </div>
     <div className="flex-1 min-w-0">
-      <p className="text-xs text-gray-400 uppercase font-bold tracking-wide">{title}</p>
-      <p className="text-sm text-white font-medium mb-0.5 truncate">{value}</p>
-      <span className="text-[10px] text-purple-400 group-hover:underline flex items-center gap-1">
+      <p className="small-text tracking-wide">{title}</p>
+      <p className="body-text truncate">{value}</p>
+      <span className="note hover:underline">
         {action} &rarr;
       </span>
     </div>
