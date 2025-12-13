@@ -12,7 +12,7 @@ const guideSteps = [
     title: "Memulai Analisis Baru",
     icon: <MdInput className="text-blue-400" />,
     content: (
-      <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+      <div className="space-y-3 small-text leading-relaxed">
         <p>
           Buka halaman <strong>"Tanyakan"</strong>. Sistem akan otomatis mendeteksi peran Anda (Mining Planner atau Shipping Planner).
         </p>
@@ -32,7 +32,7 @@ const guideSteps = [
     title: "Membaca Rekomendasi AI",
     icon: <MdSmartToy className="text-purple-400" />,
     content: (
-      <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+      <div className="space-y-3 small-text leading-relaxed">
         <p>Setelah menekan tombol <strong>Kirim Data</strong>, AI Agent akan memproses perhitungan prediktif.</p>
         <p>Anda akan melihat 3 kartu skenario:</p>
         <ul className="list-disc pl-5 space-y-1">
@@ -48,12 +48,12 @@ const guideSteps = [
     title: "Diskusi & Revisi dengan AI",
     icon: <MdChat className="text-green-400" />,
     content: (
-      <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+      <div className="space-y-3 small-text leading-relaxed">
         <p>Jika hasil belum memuaskan, Anda tidak perlu input ulang dari awal. Gunakan kolom <strong>Chat Diskusi</strong> di bawah.</p>
         <p>Contoh perintah yang bisa Anda ketik:</p>
         <div className="flex flex-col gap-2">
-          <code className="bg-black/30 p-2 rounded text-xs text-green-300">"Bagaimana jika hujan turun selama 2 jam?"</code>
-          <code className="bg-black/30 p-2 rounded text-xs text-green-300">"Coba tambah 2 truk lagi, apakah target tercapai?"</code>
+          <code className="bg-black/30 p-2 rounded !text-xs note">"Bagaimana jika hujan turun selama 2 jam?"</code>
+          <code className="bg-black/30 p-2 rounded !text-xs note">"Coba tambah 2 truk lagi, apakah target tercapai?"</code>
         </div>
         <p>AI akan menghitung ulang secara <em>real-time</em> berdasarkan konteks percakapan terakhir.</p>
       </div>
@@ -64,7 +64,7 @@ const guideSteps = [
     title: "Finalisasi & Penyimpanan",
     icon: <MdCheckCircle className="text-yellow-400" />,
     content: (
-      <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+      <div className="space-y-3 small-text leading-relaxed">
         <p>
           Setelah menemukan konfigurasi yang pas, klik tombol <strong>Finalisasi dan Kirim</strong>.
         </p>
@@ -79,7 +79,7 @@ const guideSteps = [
     title: "Riwayat & Monitoring",
     icon: <MdHistory className="text-red-400" />,
     content: (
-      <div className="space-y-3 text-gray-300 text-sm leading-relaxed">
+      <div className="space-y-3 small-text leading-relaxed">
         <p>
           Buka menu <strong>Summary Plan</strong> untuk melihat daftar rencana kerja yang sudah disetujui.
         </p>
@@ -93,18 +93,18 @@ const guideSteps = [
 
 const AccordionItem = ({ item, isOpen, onClick }) => {
   return (
-    <div className="border border-white/5 rounded-xl overflow-hidden bg-[#2a2a2a] transition-all duration-300 mb-4">
+    <div className="border border-white/5 rounded-[20px] overflow-hidden  transition-all duration-300 mb-4">
       <button
         onClick={onClick}
         className={`w-full flex items-center justify-between p-4 text-left transition-colors ${
-          isOpen ? "bg-white/5" : "hover:bg-white/5"
+          isOpen ? "!border:none card !py-4 !px-4 hover:cursor-pointer" : "!border:none card !py-4 !px-4 hover:cursor-pointer"
         }`}
       >
         <div className="flex items-center gap-4">
           <div className={`p-2 rounded-lg bg-black/20 text-xl`}>
             {item.icon}
           </div>
-          <span className="font-bold text-white text-md">{item.title}</span>
+          <span className="heading-2 !text-[18px]">{item.title}</span>
         </div>
         {isOpen ? <MdExpandLess className="text-gray-400 text-xl" /> : <MdExpandMore className="text-gray-400 text-xl" />}
       </button>
@@ -134,13 +134,13 @@ const UserGuide = () => {
     <div className="w-full max-w-4xl mx-auto pb-20 animate-fade-in-up">
       {/* Header Dokumentasi */}
       <div className="text-center mb-10 pt-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-bold uppercase tracking-wider mb-4">
+        <div className="inline-flex items-center gap-2 px-4 py-1 note  tracking-wider mb-4">
           <MdTipsAndUpdates /> Internal Documentation 
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+        <h1 className="heading-2 mb-4">
           Panduan Penggunaan Sistem
         </h1>
-        <p className="text-gray-400 max-w-lg mx-auto text-sm">
+        <p className="max-w-lg mx-auto small-text">
           Pelajari cara menggunakan AI Assistant untuk mengoptimalkan perencanaan tambang dan logistik pengapalan secara efisien.
         </p>
       </div>
@@ -161,27 +161,27 @@ const UserGuide = () => {
         </div>
 
         {/* Kolom Kanan: Troubleshooting Cepat */}
-        <div className="w-full md:w-1/3 bg-[#1e1e1e] border border-white/5 rounded-xl p-6 sticky top-6">
-          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+        <div className="card !w-[40%] sticky top-6">
+          <h3 className="warning !text-[18px] mb-4 flex items-center gap-2">
             <MdWarning className="text-yellow-500"/> Troubleshooting
           </h3>
           <ul className="space-y-4">
-            <li className="text-xs text-gray-400">
-              <strong className="block text-gray-200 mb-1">Error 429 (Kuota Habis)</strong>
+            <li className="small-text !text-xs flex flex-col">
+              <strong className="note !text-sm">Error 429 (Kuota Habis)</strong>
               Terlalu banyak permintaan dalam waktu singkat. Tunggu 1-2 menit lalu coba lagi.
             </li>
-            <li className="text-xs text-gray-400">
-              <strong className="block text-gray-200 mb-1">Error 500 (Parsing)</strong>
+            <li className="small-text !text-xs flex flex-col">
+              <strong className="note !text-sm">Error 500 (Parsing)</strong>
               Biasanya terjadi jika input angka terlalu kecil (misal: 10 ton). Coba gunakan angka yang realistis.
             </li>
-            <li className="text-xs text-gray-400">
-              <strong className="block text-gray-200 mb-1">Sesi Hilang</strong>
+            <li className="small-text !text-xs flex flex-col">
+              <strong className="note !text-sm">Sesi Hilang</strong>
               Jika chat tidak merespon, klik tombol "Reset Sesi" di pojok kanan atas halaman Tanyakan.
             </li>
           </ul>
           
           <div className="mt-6 pt-6 border-t border-white/10">
-            <p className="text-[10px] text-gray-500 text-center">
+            <p className="small-text !text-xs text-center">
               Butuh bantuan teknis lebih lanjut?<br/>
               Hubungi <strong>IT Support (Ext. 102)</strong>
             </p>

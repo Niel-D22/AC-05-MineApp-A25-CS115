@@ -396,12 +396,12 @@ const Tanyakan = () => {
         return (
           <>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="heading-2">
                 Analisis & Diskusi
               </h3>
               <button
                 onClick={handleResetClick}
-                className="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2 transition"
+                className="date !bg-red-500/10 !hover:bg-red-500/20 hover:cursor-pointer hover:scale-110 !text-red-400 border border-red-500/20 rounded-lg flex items-center gap-2 transition"
               >
                 <MdDeleteForever /> Reset Sesi
               </button>

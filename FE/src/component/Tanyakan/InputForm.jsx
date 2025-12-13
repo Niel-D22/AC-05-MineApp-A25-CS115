@@ -3,8 +3,8 @@ import { FiCheckCircle, FiCloud, FiTruck, FiTool, FiAnchor } from "./Icons";
 
 // --- Input Components ---
 const InputCard = ({ label, name, unit, value, onChange }) => (
-  <div className="bg-[#2d2d2d] p-4 rounded-lg shadow-md mb-4 border border-purple-800">
-    <label htmlFor={name} className="text-sm text-gray-400 block mb-1 font-sans">{label}</label>
+  <div className="card my-4 !py-4 !px-4">
+    <label htmlFor={name} className="small-text">{label}</label>
     <div className="flex items-center">
       <input
         type="number"
@@ -14,16 +14,16 @@ const InputCard = ({ label, name, unit, value, onChange }) => (
         onChange={onChange}
         required
         min="0"
-        className="w-full bg-[#404040] text-white p-2 rounded-l-md border-r-0 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 border-gray-600 outline-none"
+        className="w-full bg-[#404040] body-text p-2 rounded-l-md border-r-0 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 border-gray-600 outline-none"
       />
-      <span className="bg-[#404040] text-gray-400 p-2 rounded-r-md text-sm border-l border-gray-600">{unit}</span>
+      <span className="bg-[#404040] note p-2 rounded-r-md text-sm border-l border-gray-600">{unit}</span>
     </div>
   </div>
 );
 
 const SelectCard = ({ label, name, value, onChange, options }) => (
-  <div className="bg-[#2d2d2d] p-4 rounded-lg shadow-md mb-4 border border-purple-800">
-    <label htmlFor={name} className="text-sm text-gray-400 block mb-1 font-sans">{label}</label>
+  <div className="card !py-4 !px-4">
+    <label htmlFor={name} className="small-text block mb-1">{label}</label>
     <div className="relative">
       <select
         id={name}
@@ -31,7 +31,7 @@ const SelectCard = ({ label, name, value, onChange, options }) => (
         value={value || ""}
         onChange={onChange}
         required
-        className="w-full bg-[#404040] text-white p-2 rounded-md appearance-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 border-gray-600 outline-none pr-8"
+        className="w-full bg-[#404040] body-text p-2 rounded-md pr-8 hover:cursor-pointer"
       >
         <option value="" disabled>-- Pilih Kondisi --</option>
         {options.map((option) => (
@@ -132,13 +132,13 @@ const API_BASE_URL = "http://127.0.0.1:8000"
   const renderMinePlannerInputs = () => (
     <>
       <div className="input-group text-left col-span-1">
-        <div className="group-title flex items-center text-white mb-2 "><FiTruck className="mr-2" /> Target & Unit (Mining)</div>
+        <div className="group-title flex items-center body-text mb-2 "><FiTruck className="mr-2" /> Target & Unit (Mining)</div>
         <InputCard label="Target Produksi Harian (Ton)" name="productionVolume" unit="Ton" value={formData.productionVolume} onChange={handleInputChange} />
         <InputCard label="Truck Count (Aktif)" name="truckCount" unit="Unit" value={formData.truckCount} onChange={handleInputChange} />
         <InputCard label="Excavator Count (Aktif)" name="excavatorCount" unit="Unit" value={formData.excavatorCount} onChange={handleInputChange} />
       </div>
       <div className="input-group text-left col-span-1">
-        <div className="group-title flex items-center text-white mb-2"><FiTool className="mr-2" /> SDM & Lingkungan</div>
+        <div className="group-title flex items-center body-text mb-2"><FiTool className="mr-2" /> SDM & Lingkungan</div>
         <InputCard label="Operator Count (On Shift)" name="operatorCount" unit="Orang" value={formData.operatorCount} onChange={handleInputChange} />
         <SelectCard label="Kondisi Cuaca Area Tambang" name="weatherCondition" value={formData.weatherCondition} onChange={handleInputChange} options={WEATHER_OPTIONS} />
       </div>
@@ -148,13 +148,13 @@ const API_BASE_URL = "http://127.0.0.1:8000"
   const renderShippingPlannerInputs = () => (
     <>
       <div className="input-group text-left col-span-1">
-        <div className="group-title flex items-center text-white mb-2 "><FiAnchor className="mr-2" /> Target & Logistik (Shipping)</div>
+        <div className="group-title flex items-center body-text mb-2 "><FiAnchor className="mr-2" /> Target & Logistik (Shipping)</div>
         <InputCard label="Target Shipping (Ton)" name="shippingTarget" unit="Ton" value={formData.shippingTarget} onChange={handleInputChange} />
         <InputCard label="Stockpile Tersedia" name="stock" unit="Ton" value={formData.stock} onChange={handleInputChange} />
         <InputCard label="Kapasitas Transport/Trip" name="transportCapacity" unit="Ton" value={formData.transportCapacity} onChange={handleInputChange} />
       </div>
       <div className="input-group text-left col-span-1">
-        <div className="group-title flex items-center text-white mb-2"><FiTool className="mr-2" /> Waktu & Lingkungan</div>
+        <div className="group-title flex items-center body-text mb-2"><FiTool className="mr-2" /> Waktu & Lingkungan</div>
         <InputCard label="Waktu Loading (Jam)" name="loadingTime" unit="Jam" value={formData.loadingTime} onChange={handleInputChange} />
         <SelectCard label="Kondisi Cuaca Pelabuhan" name="weatherCondition" value={formData.weatherCondition} onChange={handleInputChange} options={WEATHER_OPTIONS} />
       </div>
@@ -172,8 +172,8 @@ const API_BASE_URL = "http://127.0.0.1:8000"
           {isShippingRole ? renderShippingPlannerInputs() : renderMinePlannerInputs()}
         </div>
         <div className="text-center mt-10">
-          <button type="submit" className="px-10 py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition duration-200 shadow-lg disabled:bg-gray-500 flex items-center justify-center mx-auto" disabled={loading}>
-            {loading ? "Mengirim..." : <><FiCheckCircle className="mr-2" /> KIRIM DATA & HITUNG REKOMENDASI</>}
+          <button type="submit" className="px-10 py-3 bg-purple-600  btn-prim  !disabled:bg-gray-500 flex items-center justify-center mx-auto" disabled={loading}>
+            {loading ? "Mengirim..." : <><FiCheckCircle className="mr-2" /> Kirim Data dan Rekomendasi</>}
           </button>
           {statusMessage && <p className={`mt-4 text-sm ${statusMessage.startsWith("✅") ? "text-green-400" : "text-yellow-400"}`}>{statusMessage}</p>}
         </div>
