@@ -12,10 +12,12 @@ import SummaryPlan from "./component/Rekomendasi/SummaryPlan";
 import UserGuide from "./pages/UserGuide";
 import ITSupport from "./pages/ITSupport";
 import ReportBug from "./pages/ReportBug";
+import ScrollTop from "./component/ScrollTop";
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+      <ScrollTop/>
         <Routes>
           <Route path="/" element={<AnimasiMasuk />} />
           <Route path="/auth" element={<Auth />} />
@@ -32,6 +34,7 @@ function App() {
             <Route path="feedback" element={<ReportBug />} />
           </Route>
         </Routes>
+      
       </BrowserRouter>
     </AuthProvider>
   );

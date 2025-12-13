@@ -1,106 +1,174 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import HeroMine from "../assets/LogoMine.png";
-import { IoNotifications } from "react-icons/io5";
+import { IoNotifications, IoMenu, IoClose } from "react-icons/io5";
 import { FaUserLarge } from "react-icons/fa6";
 import axios from "axios";
 
 const Navbar = () => {
   const [unreadCount, setUnreadCount] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  // Fungsi untuk cek notifikasi
+  /* ===== NOTIFICATION CHECK ===== */
   const checkUnreadNotifications = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-
-      const response = await axios.get("http://localhost:3000/api/notifications", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Hitung jumlah yang belum dibaca (is_read === 0)
-      const count = response.data.filter((n) => n.is_read === 0).length;
-      setUnreadCount(count);
-    } catch (error) {
-      console.error("Gagal cek notifikasi di navbar:", error);
+      const res = await axios.get(
+        "http://localhost:3000/api/notifications",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setUnreadCount(res.data.filter((n) => n.is_read === 0).length);
+    } catch (err) {
+      console.error("Notif error:", err);
     }
   };
 
   useEffect(() => {
-    // 1. Cek saat pertama kali load
-    checkUnreadNotifications();
-
-    // 2. Cek ulang setiap 3 detik (Polling) agar real-time
-    // Ini penting agar saat user membaca notif di halaman lain, navbar ikut update
+  ;
     const interval = setInterval(checkUnreadNotifications, 3000);
 
-    return () => clearInterval(interval); // Bersihkan interval saat komponen di-unmount
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
- return (
-    <div className="backdrop-blur-md sticky top-0 z-50 flex justify-between items-center px-10 md:px-20 h-[91px] bg-[#2F2F2F]/80 text-white border-b border-white/10 shadow-lg">
-      
-      {/* Logo Area */}
-      <div className="flex justify-center items-center gap-4">
-        <img className="h-10 md:h-12" src={HeroMine} alt="Logo" />
-        <h1 className="font-bold text-2xl md:text-3xl tracking-widest text-white drop-shadow-md">
-          MATE
-        </h1>
-      </div>
+  return (
+    <>
+      {/* ===== NAVBAR ===== */}
+      <header
+        className={`
+          sticky top-0 z-50 w-full transition-all duration-300
+          ${scrolled
+            ? "bg-[#1a1a1a]/40 backdrop-blur-md border-b border-white/10 shadow-xl"
+            : "bg-transparent"
+          }
+        `}
+      >
+        <div className="flex items-center justify-between h-[72px] md:h-[91px] px-4 sm:px-8 md:px-20 text-white">
+          {/* LOGO */}
+          <div className="flex items-center gap-3">
+            <img src={HeroMine} alt="Logo" className="h-9 md:h-12" />
+            <h1 className="font-bold text-xl md:text-3xl tracking-widest font-[OctopusGame]">
+              MATE
+            </h1>
+          </div>
 
-      {/* Navigation Area */}
-      <div>
-        <ul className="flex items-center gap-8 md:gap-10">
-          
-          {/* Menu Biasa */}
+          {/* DESKTOP MENU */}
+          <ul className="hidden md:flex items-center gap-8">
+            <li>
+              <NavLink to="/home" end className="nav-item">
+                Beranda
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/home/rekomendasi" className="nav-item">
+                Rekomendasi
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/home/tanyakan" className="nav-item">
+                Tanyakan
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/home/notifikasi"
+                className="nav-item flex items-center justify-center"
+              >
+                <div className="relative">
+                  <IoNotifications className="text-2xl" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75" />
+                      <span className="relative inline-flex h-3 w-3 rounded-full bg-purple-600" />
+                    </span>
+                  )}
+                </div>
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/home/profile"
+                className="nav-item flex items-center justify-center"
+              >
+                <FaUserLarge className="text-xl" />
+              </NavLink>
+            </li>
+          </ul>
+
+          {/* MOBILE BUTTON */}
+          <button
+            onClick={() => setOpen(!open)}
+            className="md:hidden text-2xl"
+          >
+            {open ? <IoClose /> : <IoMenu />}
+          </button>
+        </div>
+      </header>
+
+      {/* ===== MOBILE MENU ===== */}
+      <div
+        className={`
+          fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity
+          ${open ? "opacity-100 visible" : "opacity-0 invisible"}
+        `}
+        onClick={() => setOpen(false)}
+      />
+
+      <aside
+        className={`
+          fixed top-0 right-0 z-50 h-full w-64 bg-[#1a1a1a]
+          transform transition-transform duration-300
+          ${open ? "translate-x-0" : "translate-x-full"}
+        `}
+      >
+        <ul className="flex flex-col gap-6 p-6 text-white">
           <li>
-            <NavLink to="/home" end className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
+            <NavLink to="/home" end className="nav-item" onClick={() => setOpen(false)}>
               Beranda
             </NavLink>
           </li>
-
           <li>
-            <NavLink to="/home/rekomendasi" className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
+            <NavLink to="/home/rekomendasi" className="nav-item" onClick={() => setOpen(false)}>
               Rekomendasi
             </NavLink>
           </li>
-
           <li>
-            <NavLink to="/home/tanyakan" className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
+            <NavLink to="/home/tanyakan" className="nav-item" onClick={() => setOpen(false)}>
               Tanyakan
             </NavLink>
           </li>
-
-          {/* Menu Icon: Notifikasi */}
           <li>
-            <NavLink 
-              to="/home/notifikasi" 
-              className={({ isActive }) => `nav-item flex items-center justify-center ${isActive ? "active" : ""}`}
-            >
-              <div className="relative p-1"> {/* Bungkus Icon agar badge posisinya pas */}
-                <IoNotifications className="text-2xl" />
-                
-                {/* Badge Notifikasi */}
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-500 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-purple-600 border border-[#2F2F2F]"></span>
-                  </span>
-                )}
-              </div>
+            <NavLink to="/home/notifikasi" className="nav-item flex items-center gap-2" onClick={() => setOpen(false)}>
+              <IoNotifications />
+              Notifikasi
+              {unreadCount > 0 && (
+                <span className="ml-auto text-xs bg-purple-600 px-2 py-0.5 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
             </NavLink>
           </li>
-
-          {/* Menu Icon: Profil */}
           <li>
-            <NavLink to="/home/profile" className={({ isActive }) => `nav-item flex items-center justify-center ${isActive ? "active" : ""}`}>
-              <FaUserLarge className="text-xl" />
+            <NavLink to="/home/profile" className="nav-item flex items-center gap-2" onClick={() => setOpen(false)}>
+              <FaUserLarge />
+              Profil
             </NavLink>
           </li>
-
         </ul>
-      </div>
-    </div>
+      </aside>
+    </>
   );
 };
 

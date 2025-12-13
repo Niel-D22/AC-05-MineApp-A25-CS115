@@ -112,10 +112,10 @@ const LatestRecomendation = () => {
                         </div>
                     </div>
 
-                    {/* Footer Analysis Preview */}
+                    {/* Footer Analysis Preview
                     <div className="bg-white/5 p-3 rounded-lg text-xs text-gray-400 italic mb-4 line-clamp-2 border-l-2 border-purple-500/50">
                         "{plan.analysis || "Analisis lengkap tersedia di detail plan..."}"
-                    </div>
+                    </div> */}
                   </div>
 
                   <button 
@@ -167,7 +167,7 @@ const LatestRecomendation = () => {
                     {latestRec.title}
                   </h3>
                   
-                  {/* Stats Mini Horizontal */}
+                  Stats Mini Horizontal
                   <div className="flex flex-wrap gap-4 mt-4">
                      <div className="px-4 py-2 bg-[#1a1a1a] rounded-lg border border-white/10 flex items-center gap-3">
                         <div className="text-[10px] text-gray-400 uppercase font-bold">Prediksi</div>

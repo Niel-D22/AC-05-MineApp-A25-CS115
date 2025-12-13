@@ -1,26 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { UseAuth } from "../context/AuthContext";
-
-// --- PERBAIKAN IMPORT PATH (Sesuaikan dengan lokasi file Anda) ---
-// Pastikan file CostumAlerts ada di folder component
 import { Toast, ConfirmModal } from "../component/CostumAlerts";
-
-// Import Ikon
-import { MdRefresh, MdDeleteForever, MdChat } from "react-icons/md";
-
-// Import Komponen Pecahan (Pastikan file-file ini sudah dibuat di folder component/Tanyakan)
+import { MdDeleteForever } from "react-icons/md";
 import StepBar from "../component/Tanyakan/StepBar";
 import InputData from "../component/Tanyakan/InputForm";
-// Perhatikan: AnalysisHistoryCard harus diekspor dari file RecommendationDisplay
 import RecommendationDisplay, {
   AnalysisHistoryCard,
 } from "../component/Tanyakan/HasilRekomendasi";
 import ChatInterface from "../component/Tanyakan/ChatInterface";
-
-// Opsional: PageTransition (Hapus jika tidak pakai)
 import PageTransition from "../component/PageTransition";
 
-// --- HELPER: Error Message Friendly ---
 const getFriendlyErrorMessage = (error) => {
   const message = error.message || "";
   if (message.includes("429"))
@@ -51,7 +40,6 @@ const Tanyakan = () => {
   const API_BASE = "http://localhost:8000";
   const { userRole } = UseAuth();
 
-  // --- STATE INIT WITH PERSISTENCE ---
   const [currentSessionId, setCurrentSessionId] = useState(
     () => localStorage.getItem(STORAGE_KEYS.ID) || null
   );
@@ -81,21 +69,24 @@ const Tanyakan = () => {
   const [toast, setToast] = useState(null);
   const [resetModalOpen, setResetModalOpen] = useState(false);
 
-  // --- EFFECTS ---
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.CHAT, JSON.stringify(chatMessages));
   }, [chatMessages]);
+  
   useEffect(() => {
     if (apiResponseData)
       localStorage.setItem(STORAGE_KEYS.DATA, JSON.stringify(apiResponseData));
     else localStorage.removeItem(STORAGE_KEYS.DATA);
   }, [apiResponseData]);
+  
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(apiHistory));
   }, [apiHistory]);
+  
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.STEP, currentStep);
   }, [currentStep]);
+  
   useEffect(() => {
     if (currentSessionId)
       localStorage.setItem(STORAGE_KEYS.ID, currentSessionId);
@@ -103,7 +94,6 @@ const Tanyakan = () => {
 
   const showToast = (message, type = "info") => setToast({ message, type });
 
-  // --- LOGIC RESET ---
   const handleResetClick = () => setResetModalOpen(true);
 
   const confirmResetSession = () => {
@@ -127,7 +117,6 @@ const Tanyakan = () => {
     showToast("Sesi berhasil direset. Silakan mulai baru.", "success");
   };
 
-  // --- LOGIC INPUT PROCESSED ---
   const handleInputDataProcessed = (data) => {
     const sessionId = Date.now().toString();
     setCurrentSessionId(sessionId);
@@ -192,7 +181,6 @@ const Tanyakan = () => {
     setIsRecommendationOpen(true);
   };
 
-  // --- LOGIC SCENARIO SELECTION ---
   const handleScenarioSelection = (scenario) => {
     setSelectedScenario(scenario);
     if (apiResponseData) {
@@ -216,7 +204,6 @@ const Tanyakan = () => {
     handleSendChat(query, true, scenario);
   };
 
-  // --- LOGIC CHAT ---
   const handleSendChat = async (
     text,
     isSystemGenerated = false,
@@ -294,7 +281,6 @@ const Tanyakan = () => {
           : {}),
       };
 
-      // Safety check agar UI tidak blank jika field kosong
       if (!updatedResponse.truckCount)
         updatedResponse.truckCount = apiResponseData.truckCount || 0;
       if (!updatedResponse.stock)
@@ -317,7 +303,6 @@ const Tanyakan = () => {
     }
   };
 
-  // --- LOGIC FINALISASI ---
   const handleFinalize = async () => {
     if (!apiResponseData) {
       showToast("Belum ada data.", "warning");
@@ -375,7 +360,6 @@ const Tanyakan = () => {
     showToast(`Plan berhasil difinalisasi!`, "success");
   };
 
-  // --- RENDER CONTENT ---
   const renderContent = () => {
     switch (currentStep) {
       case STEPS.INPUT:
@@ -390,15 +374,17 @@ const Tanyakan = () => {
       case STEPS.FINALIZATION:
         return (
           <>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-white">
+            <div className="flex justify-between items-center mb-3 sm:mb-4">
+              <h3 className="text-lg sm:text-xl font-bold text-white">
                 Analisis & Diskusi
               </h3>
               <button
                 onClick={handleResetClick}
-                className="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2 transition"
+                className="text-[10px] sm:text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg flex items-center gap-1 sm:gap-2 transition"
               >
-                <MdDeleteForever /> Reset Sesi
+                <MdDeleteForever className="text-sm sm:text-base" /> 
+                <span className="hidden sm:inline">Reset Sesi</span>
+                <span className="sm:hidden">Reset</span>
               </button>
             </div>
 
@@ -411,8 +397,8 @@ const Tanyakan = () => {
             />
 
             {apiHistory.length > 0 && (
-              <div className="mt-6">
-                <h4 className="text-sm font-bold text-gray-500 mb-2 border-b border-white/5 pb-2">
+              <div className="mt-4 sm:mt-5 md:mt-6">
+                <h4 className="text-xs sm:text-sm font-bold text-gray-500 mb-2 border-b border-white/5 pb-2">
                   Riwayat Perubahan Skenario
                 </h4>
                 {apiHistory.map((data, index) => (
@@ -442,7 +428,7 @@ const Tanyakan = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen text-white p-4 pb-20">
+      <div className="min-h-screen text-white p-3 sm:p-4 md:p-6 pb-20">
         {toast && (
           <Toast
             message={toast.message}
@@ -461,7 +447,7 @@ const Tanyakan = () => {
         />
 
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-7 md:mb-8">
             <StepBar currentStep={currentStep} />
           </div>
           {renderContent()}
