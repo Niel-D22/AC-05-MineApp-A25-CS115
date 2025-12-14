@@ -104,7 +104,7 @@ const SummaryPlan = () => {
     });
   };
 
-
+console.log("All Plans:", allPlans);
 
   const filteredData = allPlans.filter(
     (item) => (item.type || "Mining").toLowerCase() === activeTab
@@ -183,7 +183,7 @@ const SummaryPlan = () => {
               
               const isGapBad = parseFloat(plan.prediction) < parseFloat(plan.target || plan.target_tonnage);
               const hasAccess = canDeletePlan(plan.type);
-
+ 
               return (
                 <div key={index} className="bg-[#1e1e1e] border border-white/5 rounded-xl p-6 hover:border-purple-500/30 transition-colors shadow-xl">
                   {/* HEADER KARTU */}

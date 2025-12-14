@@ -53,6 +53,7 @@ const API_BASE_URL = "http://127.0.0.1:8000"
     { value: "Light Rain", label: "Rainy (Hujan)" },
   ];
 
+
   const initialMinePlannerState = { productionVolume: 80, truckCount: 10, excavatorCount: 2, operatorCount: 15, weatherCondition: "Sunny" };
   const initialShippingPlannerState = { shippingTarget: 100, stock: 120, transportCapacity: 10, loadingTime: 8, weatherCondition: "Sunny" };
 
@@ -109,6 +110,9 @@ const API_BASE_URL = "http://127.0.0.1:8000"
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      console.log("Submitting Data:", payload);
+
+     
 
       localStorage.setItem("current_form_data", JSON.stringify(formData));
 
@@ -120,6 +124,7 @@ const API_BASE_URL = "http://127.0.0.1:8000"
 
       const data = await response.json();
       onDataProcessed(data);
+      
       setStatusMessage(`✅ Data Berhasil Diproses! Target: ${data.target_tonnage} Ton.`);
     } catch (error) {
       console.error("Error mengirim data ke AI Agent:", error.message);
