@@ -100,7 +100,7 @@ const Profil = () => {
 
 return (
   <PageTransition>
-    // Tambahkan px-4 agar ada jarak di HP
+
     <div className="min-h-screen flex items-center justify-center p-4 md:p-8 animate-fade-in-up"> 
       
       {/* Gunakan w-full dengan max-w-lg agar bagus di tablet/desktop */}
