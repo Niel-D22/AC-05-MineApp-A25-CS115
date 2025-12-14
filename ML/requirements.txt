@@ -1,0 +1,15 @@
+# Library utama untuk berinteraksi dengan Google Gemini API melalui Agent Developer Kit (ADK)
+google-adk
+
+# Google GenAI SDK
+google-genai
+
+# Untuk memuat environment variable dari file .env
+python-dotenv==1.0.1  # Tambahkan versi spesifik
+
+# Library untuk FastAPI dan model
+fastapi
+uvicorn
+pydantic
+scikit-learn
+pywhatkit
