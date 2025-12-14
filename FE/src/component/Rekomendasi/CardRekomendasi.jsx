@@ -14,8 +14,8 @@ const DeleteModal = ({ isOpen, onClose, onConfirm, isAll }) => {
       
       {/* Kotak Modal */}
       <div className="relative bg-[#1e1e1e] border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-all">
-        <h3 className="text-xl font-bold text-red-500 mb-2">Konfirmasi Hapus</h3>
-        <p className="text-gray-400 text-sm mb-6">
+        <h3 className="heading-2 !text-red-500 mb-2">Konfirmasi Hapus</h3>
+        <p className="!text-gray-400 body-text !text-sm mb-6">
           {isAll 
             ? "Semua riwayat akan dihapus permanen dan tidak dapat dikembalikan." 
             : "Data yang dihapus tidak dapat dikembalikan."}
@@ -23,13 +23,13 @@ const DeleteModal = ({ isOpen, onClose, onConfirm, isAll }) => {
         <div className="flex justify-center gap-4">
           <button 
             onClick={onClose} 
-            className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white transition"
+            className="px-4 py-2 font-note text-gray-400 hover:text-white transition hover:cursor-pointer"
           >
             Batal
           </button>
           <button 
             onClick={onConfirm} 
-            className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-bold shadow-lg transition transform active:scale-95"
+            className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-note shadow-lg transition transform active:scale-95 hover:cursor-pointer"
           >
             Ya, Hapus
           </button>

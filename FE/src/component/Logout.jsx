@@ -28,7 +28,7 @@ const Logout = () => {
         title="Logout"
       >
         <FiLogOut size={24} className="mr-2" />
-        <span className="hidden md:inline">Logout</span>
+        <span className="hidden md:inline body-text !text-red-500 !hover:text-red-700 cursor-pointer">Logout</span>
       </div>
 
       {showConfirm && (
