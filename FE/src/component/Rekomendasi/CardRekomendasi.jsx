@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
+import { createPortal } from "react-dom";
 import { ConfirmModal, Toast } from "../CostumAlerts";
 
 const DeleteModal = ({ isOpen, onClose, onConfirm, isAll }) => {
   if (!isOpen) return null;
-  return (
+  return createPortal (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 w-screen h-screen">
       {/* Background Gelap */}
       <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       ></div>
       
@@ -35,7 +36,9 @@ const DeleteModal = ({ isOpen, onClose, onConfirm, isAll }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
+    
   );
 };
 

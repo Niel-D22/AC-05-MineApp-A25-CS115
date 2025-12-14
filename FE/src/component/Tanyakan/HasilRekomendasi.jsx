@@ -45,7 +45,6 @@ const RecommendationCard = ({ recommendation, index, onScenarioSelect }) => {
   );
 };
 
-// 👇 PERHATIKAN: Saya menambahkan kata 'export' di sini agar bisa di-import di file lain
 export const AnalysisHistoryCard = ({ iteration, apiData }) => {
   if (!apiData || !apiData.initial_prediction) return null;
   const weatherInfo = mapWeather(apiData.weatherCondition || "N/A");
@@ -65,13 +64,16 @@ export const AnalysisHistoryCard = ({ iteration, apiData }) => {
   );
 };
 
-const RecommendationDisplay = ({ apiData, isOpen, setIsOpen, onFinalize, onScenarioSelect }) => {
+const RecommendationDisplay = ({ apiData, isOpen, setIsOpen, onFinalize, onScenarioSelect,isFinalizing }) => {
   const hasData = apiData && apiData.recommendations && apiData.recommendations.length > 0;
   if (!hasData) return <div className="text-white p-4 text-center rounded-xl">Menunggu input data dan hasil dari Agent API...</div>;
 
   const { target_tonnage, initial_prediction, initial_difference, initial_analysis_text, recommendations } = apiData;
   const isFinalized = apiData.status === "Finalized";
-  const isSend = isFinalized ? "Sudah Terkirim" : "Kirim dan Finalisasi"
+let buttonText = "Kirim dan Finalisasi";
+  if (isFinalizing) buttonText = "Memproses...";
+  else if (isFinalized) buttonText = "Sudah Terkirim";
+
   const statusText = isFinalized ? "Telah Difinalisasi" : "Berhasil Dihitung";
   const statusColor = isFinalized ? "text-green-400" : "text-yellow-400";
 
@@ -99,7 +101,14 @@ const RecommendationDisplay = ({ apiData, isOpen, setIsOpen, onFinalize, onScena
             <p className="note mb-4">Pilih salah satu skenario di atas atau klik 'Finalisasi dan Kirim' jika Anda puas.</p>
             <div className="flex justify-between items-center">
               <p className="body-text">Status : <span className={`font-bold ${statusColor}`}>{statusText}</span></p>
-              <button onClick={onFinalize} className={`px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2 ${isFinalized ? "btn-disabled" : "btn-prim"}`}>{isSend} <MdCheckCircleOutline className="text-xl" /></button>
+<button
+                onClick={onFinalize}
+                disabled={isFinalizing || isFinalized} // Matikan tombol jika loading ATAU sudah final
+                className={`px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2 
+                  ${(isFinalizing || isFinalized) ? "bg-gray-600 text-gray-400 cursor-not-allowed opacity-70" : "btn-prim"}`}
+              >
+                {buttonText} <MdCheckCircleOutline className="text-xl" />
+              </button>
             </div>
           </div>
         </div>

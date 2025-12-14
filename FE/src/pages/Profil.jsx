@@ -3,7 +3,7 @@ import { UseAuth } from "../context/AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Logout from "../component/Logout";
-
+import PageTransition from "../component/PageTransition";
 // Import Icons
 import { MdPerson, MdWork, MdVerifiedUser, MdEmail } from "react-icons/md";
 
@@ -99,6 +99,7 @@ const Profil = () => {
   if (!profileData) return null;
 
 return (
+  <PageTransition>
     // Tambahkan px-4 agar ada jarak di HP
     <div className="min-h-screen flex items-center justify-center p-4 md:p-8 animate-fade-in-up"> 
       
@@ -152,6 +153,7 @@ return (
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 };
 

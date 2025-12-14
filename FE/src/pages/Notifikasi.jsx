@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { MdDeleteSweep } from "react-icons/md"; // Import ikon sapu/hapus semua
+import { MdDeleteSweep, MdClose } from "react-icons/md"; 
+import PageTransitionEvent from "../component/PageTransition";
+import { ConfirmModal } from "../component/CostumAlerts"; // Pastikan import ini ada
 
 const Notifikasi = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
   
+  // State untuk Modal Konfirmasi
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null); // ID yg mau dihapus (null jika hapus semua)
+  const [isDeleteAll, setIsDeleteAll] = useState(false); // Flag untuk membedakan hapus satu atau semua
+
+  const navigate = useNavigate();
   const API_URL = "http://localhost:3000/api/notifications"; 
 
   // 1. Fetch Data
@@ -25,9 +32,7 @@ const Notifikasi = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Urutkan notifikasi: Terbaru di atas
       const sortedData = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      
       setNotifications(sortedData);
       setLoading(false);
     } catch (err) {
@@ -39,92 +44,77 @@ const Notifikasi = () => {
 
   const handleOnClick = (notif) => {
     if (notif.is_read === 0) {
-          markAsRead(notif.id, notif.is_read);
-      }
-      let targetTab = "mining";
-      if (notif.type && (notif.type.toLowerCase().includes("shipping"))) {
-          targetTab = "shipping";
-      }
-      // Redirect ke summary plan dengan highlight ID
-      navigate("/home/summary-plan", { 
-          state: { activeTab: targetTab, highlightId: notif.reference_id } 
-      });
+        markAsRead(notif.id, notif.is_read);
+    }
+    let targetTab = "mining";
+    if (notif.type && (notif.type.toLowerCase().includes("shipping"))) {
+        targetTab = "shipping";
+    }
+    navigate("/home/summary-plan", { 
+        state: { activeTab: targetTab, highlightId: notif.reference_id } 
+    });
   };
 
   // 2. Tandai Baca
   const markAsRead = async (id, currentStatus) => {
     if (currentStatus === 1) return; 
-
     try {
       const token = localStorage.getItem("token");
       await axios.put(`${API_URL}/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setNotifications((prev) =>
-        prev.map((notif) =>
-          notif.id === id ? { ...notif, is_read: 1 } : notif
-        )
+        prev.map((notif) => notif.id === id ? { ...notif, is_read: 1 } : notif)
       );
-    } catch (err) {
-      console.error("Error update status:", err);
-    }
+    } catch (err) { console.error("Error update status:", err); }
   };
 
-  // 3. Hapus Satu Notifikasi
-  const deleteNotification = async (id, e) => {
-    e.stopPropagation(); // Agar tidak men-trigger klik card (pindah halaman)
-    
-    // Gunakan window.confirm standar (atau bisa ganti Modal Custom nanti)
-    if (!window.confirm("Hapus notifikasi ini?")) return;
+  // --- LOGIC DELETE DENGAN MODAL ---
 
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-    } catch (err) {
-      console.error("Gagal menghapus:", err);
-      alert("Gagal menghapus notifikasi.");
-    }
+  // Trigger Hapus Satu
+  const promptDeleteOne = (id, e) => {
+    e.stopPropagation();
+    setDeleteTargetId(id);
+    setIsDeleteAll(false);
+    setConfirmOpen(true);
   };
 
-  // 4. Hapus SEMUA Notifikasi (Fitur Baru)
-  const handleDeleteAll = async () => {
+  // Trigger Hapus Semua
+  const promptDeleteAll = () => {
     if (notifications.length === 0) return;
-    if (!window.confirm("Apakah Anda yakin ingin menghapus SEMUA riwayat notifikasi? Tindakan ini tidak bisa dibatalkan.")) return;
+    setDeleteTargetId(null);
+    setIsDeleteAll(true);
+    setConfirmOpen(true);
+  };
+
+  // Eksekusi Hapus (Dipanggil saat user klik "Ya" di modal)
+  const executeDelete = async () => {
+    const token = localStorage.getItem("token");
+    setConfirmOpen(false); // Tutup modal dulu
 
     try {
-      const token = localStorage.getItem("token");
-      
-      // Request ke endpoint DELETE root (sesuaikan dengan backend Anda)
-      // Jika backend menggunakan json-server, biasanya tidak support delete all sekaligus,
-      // jadi kita loop manual di frontend. Jika backend Express buatan sendiri, buat route delete all.
-      
-      // CARA 1: Jika Backend support DELETE /api/notifications (Bulk Delete)
-      // await axios.delete(API_URL, { headers: { Authorization: `Bearer ${token}` } });
-
-      // CARA 2: Loop Manual (Lebih aman untuk JSON-Server / Backend sederhana)
-      const deletePromises = notifications.map(notif => 
-        axios.delete(`${API_URL}/${notif.id}`, { headers: { Authorization: `Bearer ${token}` } })
-      );
-      
-      await Promise.all(deletePromises);
-
-      setNotifications([]); // Kosongkan state
-      alert("Semua notifikasi berhasil dihapus.");
-
+        if (isDeleteAll) {
+            // Logic Hapus Semua
+            const deletePromises = notifications.map(notif => 
+                axios.delete(`${API_URL}/${notif.id}`, { headers: { Authorization: `Bearer ${token}` } })
+            );
+            await Promise.all(deletePromises);
+            setNotifications([]);
+        } else {
+            // Logic Hapus Satu
+            if (!deleteTargetId) return;
+            await axios.delete(`${API_URL}/${deleteTargetId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setNotifications((prev) => prev.filter((n) => n.id !== deleteTargetId));
+        }
     } catch (err) {
-      console.error("Gagal hapus semua:", err);
-      alert("Terjadi kesalahan saat menghapus semua data.");
+        console.error("Gagal menghapus:", err);
+        alert("Gagal menghapus data.");
     }
   };
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  useEffect(() => { fetchNotifications(); }, []);
 
   const formatDate = (dateString) => {
     const options = { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
@@ -132,28 +122,39 @@ const Notifikasi = () => {
   };
 
   return (
+    <PageTransitionEvent>
     <div className="min-h-screen text-white p-6 pb-24 animate-fade-in-up">
+      
+      {/* --- MODAL KONFIRMASI --- */}
+      <ConfirmModal 
+        isOpen={confirmOpen}
+        title={isDeleteAll ? "Hapus Semua Notifikasi?" : "Hapus Notifikasi?"}
+        message={isDeleteAll 
+            ? "Tindakan ini akan menghapus seluruh riwayat notifikasi Anda secara permanen." 
+            : "Apakah Anda yakin ingin menghapus pesan notifikasi ini?"}
+        onConfirm={executeDelete}
+        onCancel={() => setConfirmOpen(false)}
+        confirmText="Ya, Hapus"
+        isDanger={true}
+      />
+
       <div className="max-w-3xl mx-auto">
         
         {/* --- HEADER --- */}
         <div className="flex justify-between items-end mb-8 border-b border-gray-700 pb-4">
           <div>
-            <h1 className="heading-2">
-                Notifikasi 🔔
-            </h1>
+            <h1 className="heading-2">Notifikasi 🔔</h1>
             <p className="small-text mt-1">
                 {notifications.filter(n => n.is_read === 0).length} Pesan belum dibaca
             </p>
           </div>
 
-          {/* Tombol Hapus Semua */}
           {notifications.length > 0 && (
               <button 
-                onClick={handleDeleteAll}
-                className="note !text-red-400 hover:bg-red-500/10 hover:cursor-pointer px-3 py-1 rounded flex    items-center gap-1 transition border border-red-800"
+                onClick={promptDeleteAll}
+                className="note !text-red-400 hover:bg-red-500/10 hover:cursor-pointer px-3 py-1 rounded flex items-center gap-1 transition border border-red-800"
               >
-                <MdDeleteSweep size={18} />
-                Hapus Semua
+                <MdDeleteSweep size={18} /> Hapus Semua
               </button>
           )}
         </div>
@@ -183,34 +184,34 @@ const Notifikasi = () => {
                   : "bg-[#1A1A1A] border-white/5 opacity-70 hover:opacity-100"
               }`}
             >
-              <div className="flex justify-between items-start gap-4">
+              <div className="flex items-start gap-4">
                 {/* Ikon Tipe */}
                 <div className={`p-3 rounded-full shrink-0 ${notif.is_read === 0 ? "bg-purple-500/20 text-purple-400" : "bg-gray-700/30 text-gray-500"}`}>
                   {notif.type === 'alert' ? '⚠️' : '📢'}
                 </div>
 
                 {/* Konten Text */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center mb-1 flex-wrap gap-2">
+                <div className="flex-1 min-w-0 pr-8"> {/* Tambah padding-right agar teks tidak nabrak tombol X */}
+                  <div className="flex justify-between items-start mb-1 flex-col sm:flex-row sm:items-center gap-1">
                     <h3 className={`heading-2 !text-font ${notif.is_read === 0 ? "heading-2 !text-font" : "heading-2 !text-white"}`}>
                       {notif.title}
                     </h3>
-                    <span className="date">
+                    <span className="date whitespace-nowrap">
                       {formatDate(notif.created_at)}
                     </span>
                   </div>
-                  <p className="small-text">
+                  <p className="small-text mt-1">
                     {notif.message}
                   </p>
                 </div>
 
-                {/* Tombol Hapus Satu (Absolute Position) */}
+                {/* Tombol Hapus Satu (Diperbaiki Posisinya) */}
                 <button 
-                  onClick={(e) => deleteNotification(notif.id, e)}
-                  className="absolute top-4 right-4 text-gray-500 hover:text-red-500 hover:bg-white/10 p-1.5 rounded-lg transition opacity-0 group-hover:opacity-100"
+                  onClick={(e) => promptDeleteOne(notif.id, e)}
+                  className="absolute top-3 right-3 text-gray-500 hover:text-red-400 hover:bg-white/5 p-1.5 rounded-full transition opacity-0 group-hover:opacity-100 focus:opacity-100"
                   title="Hapus pesan ini"
                 >
-                  ✕
+                  <MdClose size={18} />
                 </button>
               </div>
 
@@ -223,6 +224,7 @@ const Notifikasi = () => {
         </div>
       </div>
     </div>
+    </PageTransitionEvent>
   );
 };
 

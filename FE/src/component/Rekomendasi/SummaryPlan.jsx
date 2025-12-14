@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
+import { createPortal } from "react-dom"; 
 import { ConfirmModal, Toast } from "../CostumAlerts";
 
 const DeleteModal = ({ isOpen, onClose, onConfirm, isAll }) => {
   if (!isOpen) return null;
-  return (
+  return createPortal (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 w-screen h-screen">
       <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       ></div>
       <div className="relative bg-[#1e1e1e] border border-white/10 rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-all">
@@ -27,7 +28,8 @@ const DeleteModal = ({ isOpen, onClose, onConfirm, isAll }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
@@ -38,6 +40,20 @@ const getWeatherLabel = (val) => {
   return val;
 };
 
+const UrgencyTag = ({ hasPlan }) => {
+  return (
+    <span
+      className={` ${
+        hasPlan 
+          ? "date rounded-lg !bg-primary !text-text-body" 
+          : "date !bg-gray-500/20 rounded-lg !text-text-body"
+      }`}
+    >
+      {hasPlan ? "Finalized" : "Draft"}
+    </span>
+  );
+};
+
 const SummaryPlan = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("mining");
@@ -46,18 +62,42 @@ const SummaryPlan = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  useEffect(() => {
-      if (location.state && location.state.activeTab) {
-        setActiveTab(location.state.activeTab);
-      }
-    }, [location.state]);
-
+  // 1. Load Data
   useEffect(() => {
     const savedPlans = localStorage.getItem("finalizedPlans");
     if (savedPlans) {
       setAllPlans(JSON.parse(savedPlans));
     }
   }, []);
+
+  // 2. Handle Tab Switch dari State Navigasi
+  useEffect(() => {
+      if (location.state && location.state.activeTab) {
+        setActiveTab(location.state.activeTab);
+      }
+  }, [location.state]);
+
+  // 3. EFEK BARU: AUTO SCROLL KE ID PLAN (DARI NOTIFIKASI)
+  useEffect(() => {
+    const highlightId = location.state?.highlightId;
+    
+    if (highlightId && allPlans.length > 0) {
+        // Beri delay sedikit agar elemen ter-render sempurna
+        setTimeout(() => {
+            const element = document.getElementById(highlightId);
+            if (element) {
+                // Scroll halus ke tengah layar
+                element.scrollIntoView({ behavior: "smooth", block: "center" });
+                
+                // Efek visual sementara (Highlight/Kedip)
+                element.classList.add("ring-2", "ring-purple-500", "bg-white/5");
+                setTimeout(() => {
+                    element.classList.remove("ring-2", "ring-purple-500", "bg-white/5");
+                }, 3000);
+            }
+        }, 500);
+    }
+  }, [location.state, allPlans, activeTab]); // Jalankan ulang jika tab/data berubah
 
   const promptDeleteOne = (id) => { setDeleteTarget(id); setModalOpen(true); };
   const promptDeleteCategory = () => { 
@@ -144,7 +184,11 @@ const SummaryPlan = () => {
             };
 
             return (
-                <div key={index} className="card rounded-lg">
+                <div 
+                    key={index} 
+                    id={plan.id}  /* <--- PENTING: ID INI DIGUNAKAN UNTUK SCROLL */
+                    className="card rounded-lg transition-all duration-500 ease-in-out scroll-mt-24"
+                >
                 <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
                     <div className="flex gap-x-10 items-center">
                     <h3 className="heading-2">

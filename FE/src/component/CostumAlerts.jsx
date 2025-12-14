@@ -33,16 +33,12 @@ export const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, isDa
   if (!isOpen) return null;
 
   return (
-    // WRAPPER UTAMA: Mengunci seluruh layar (Viewport)
-    // 'fixed inset-0' -> Menempel ke 4 sudut layar browser
-    // 'z-[9999]' -> Memastikan di lapisan paling atas (di atas Navbar dll)
-    // 'flex items-center justify-center' -> Memaksa konten (kotak modal) ke TENGAH
+
     <div className="fixed inset-0 z-[9999] flex items-center justify-center w-full h-full p-4">
       
-      {/* OVERLAY BACKGROUND */}
-      {/* Gelap & Blur di belakang modal */}
+
       <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" 
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity" 
         onClick={onCancel} // Klik area gelap untuk menutup
       ></div>
       
