@@ -46,7 +46,6 @@ const Profil = () => {
     fetchProfileData();
   }, [token, logout, navigate]);
 
-  // --- Helper: Get Initials for Avatar ---
   const getInitials = (name) => {
     if (!name) return "U";
     return name
@@ -57,7 +56,6 @@ const Profil = () => {
       .toUpperCase();
   };
 
-  // --- Helper: Role Color Config ---
   const roleConfig = {
     Main: {
       color: "text-purple-400",
@@ -75,7 +73,6 @@ const Profil = () => {
 
   const currentRoleStyle = roleConfig[userRole] || roleConfig.Main;
 
-  // --- Tampilan Loading (Skeleton) ---
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
@@ -90,7 +87,7 @@ const Profil = () => {
   if (error)
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="text-red-400 bg-red-900/20 border border-red-500/50 p-4 rounded-lg">
+        <div className="text-red-400 bg-red-900/20 border border-red-500/50 p-4 rounded-lg text-sm md:text-base">
           ⚠️ {error}
         </div>
       </div>
@@ -98,61 +95,85 @@ const Profil = () => {
 
   if (!profileData) return null;
 
-return (
-  <PageTransition>
-
-    <div className="min-h-screen flex items-center justify-center p-4 md:p-8 animate-fade-in-up"> 
-      
-      {/* Gunakan w-full dengan max-w-lg agar bagus di tablet/desktop */}
-      <div className="relative w-full max-w-md md:max-w-lg bg-[#1e1e1e] border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+  return (
+    <PageTransition>
+      <div className="min-h-screen flex items-center justify-center p-4 md:p-8 animate-fade-in-up">
         
-        {/* Header Background */}
-        <div className={`absolute top-0 left-0 w-full h-24 md:h-32 bg-gradient-to-r ${userRole === 'Shipping' ? 'from-blue-900 to-slate-900' : 'from-purple-900 to-slate-900'} opacity-50`}></div>
-
-        <div className="relative pt-8 pb-8 px-6 md:px-8 flex flex-col items-center">
+        {/* RESPONSIVE CARD CONTAINER:
+            - w-[95%] : Lebar hampir penuh di HP
+            - max-w-md / md:max-w-lg : Batas maksimal lebar di tablet/desktop
+            - rounded-xl md:rounded-2xl : Lengkungan sudut responsif
+        */}
+        <div className="relative w-[95%] max-w-md md:max-w-lg bg-[#1e1e1e] border border-white/10 rounded-xl md:rounded-2xl shadow-2xl overflow-hidden">
           
-          {/* Avatar - Ukuran responsif */}
-          <div className="relative mb-4">
-            <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-2xl md:text-3xl font-bold text-white shadow-xl border-4 border-[#1e1e1e] bg-gradient-to-br ${userRole === 'Shipping' ? 'from-blue-500 to-cyan-400' : 'from-purple-500 to-pink-500'}`}>
-              {getInitials(profileData.name)}
-            </div>
-            <div className="absolute bottom-1 right-1 bg-green-500 w-4 h-4 md:w-5 md:h-5 rounded-full border-4 border-[#1e1e1e]" title="Active"></div>
-          </div>
+          {/* Header Gradient */}
+          <div
+            className={`absolute top-0 left-0 w-full h-24 md:h-32 bg-gradient-to-r ${
+              userRole === "Shipping"
+                ? "from-blue-900 to-slate-900"
+                : "from-purple-900 to-slate-900"
+            } opacity-50`}
+          ></div>
 
-          {/* Name & Role */}
-          <h2 className="heading-2 my-4 max-w-full">
-            {profileData.name}
-          </h2>
-          
-          <div className={`px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold tracking-wider uppercase border ${currentRoleStyle.bg} ${currentRoleStyle.color} ${currentRoleStyle.border} flex items-center gap-1.5`}>
-            <MdVerifiedUser className="text-sm" />
-            <p className="font-note">{userRole} Planner</p>
-          </div>
-
-          <div className="w-full h-px bg-white/10 my-6"></div>
-
-          {/* Detail Grid */}
-          <div className="w-full space-y-3 md:space-y-4">
-            {/* ... (Isi detail sama, styling flex sudah cukup responsif) ... */}
-             <div className="flex items-center p-3 md:p-4 bg-white/5 rounded-xl border border-white/5">
-              <div className="p-2 bg-gray-800 rounded-lg mr-3 md:mr-4 text-gray-400">
-                <MdPerson size={20} className="md:text-xl" />
+          <div className="relative pt-8 pb-8 px-5 md:px-8 flex flex-col items-center">
+            
+            {/* Avatar Responsive */}
+            <div className="relative mb-4">
+              <div
+                className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-2xl md:text-3xl font-bold text-white shadow-xl border-4 border-[#1e1e1e] bg-gradient-to-br ${
+                  userRole === "Shipping"
+                    ? "from-blue-500 to-cyan-400"
+                    : "from-purple-500 to-pink-500"
+                }`}
+              >
+                {getInitials(profileData.name)}
               </div>
-              <div className="overflow-hidden">
-                <p className="small-text">Nama Pengguna</p>
-                <p className="body-text">{profileData.name}</p>
-              </div>
+              <div
+                className="absolute bottom-1 right-1 bg-green-500 w-4 h-4 md:w-5 md:h-5 rounded-full border-4 border-[#1e1e1e]"
+                title="Active"
+              ></div>
             </div>
-            {/* ... (Jabatan row sama logicnya) ... */}
-          </div>
 
-          <div className="w-full mt-6 md:mt-8">
-            <Logout /> 
-          </div>
+            {/* Nama & Role */}
+            <h2 className="heading-2 my-4 text-center break-words max-w-full">
+              {profileData.name}
+            </h2>
 
+            <div
+              className={`px-3 md:px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold tracking-wider uppercase border ${currentRoleStyle.bg} ${currentRoleStyle.color} ${currentRoleStyle.border} flex items-center gap-1.5`}
+            >
+              <MdVerifiedUser className="text-sm md:text-base" />
+              <p className="font-note">{userRole} Planner</p>
+            </div>
+
+            <div className="w-full h-px bg-white/10 my-5 md:my-6"></div>
+
+            {/* Grid Detail Info */}
+            <div className="w-full space-y-3 md:space-y-4">
+              
+              {/* Card Detail: Nama */}
+              <div className="flex items-center p-3 md:p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                <div className="p-2 bg-gray-800 rounded-lg mr-3 md:mr-4 text-gray-400 shrink-0">
+                  <MdPerson size={20} className="md:text-xl" />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="small-text">Nama Pengguna</p>
+                  <p className="body-text truncate">{profileData.name}</p>
+                </div>
+              </div>
+
+         
+
+            </div>
+
+            {/* Logout Section */}
+            <div className="w-full mt-6 md:mt-8 flex justify-center">
+              <Logout />
+            </div>
+
+          </div>
         </div>
       </div>
-    </div>
     </PageTransition>
   );
 };

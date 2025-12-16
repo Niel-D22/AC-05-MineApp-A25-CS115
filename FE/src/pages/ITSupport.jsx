@@ -2,22 +2,18 @@ import React, { useState } from "react";
 import { 
   MdEmail, MdWhatsapp, MdVpnKey, MdSend, MdInfoOutline, MdFeaturedPlayList, MdHelpOutline
 } from "react-icons/md";
-// Pastikan path import Toast benar sesuai struktur folder Anda
 import { Toast } from "../component/CostumAlerts"; 
 import PageTransition from "../component/PageTransition";
 
 const ITSupport = () => {
-  // Default kategori diganti ke 'access' karena 'bug' sudah dihapus
   const [formData, setFormData] = useState({ subject: "", category: "access", message: "" });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
-  // --- LOGIKA KIRIM EMAIL (MAILTO) ---
   const handleSendEmail = () => {
     const recipient = "danielwarouw01@gmail.com";
     const mailSubject = `[IT SUPPORT] ${formData.category.toUpperCase()} - ${formData.subject}`;
     
-    // Format Body Email yang Rapi
     const body = `
 Halo Tim IT Support,
 
@@ -35,7 +31,6 @@ ${formData.message}
 Mohon bantuannya. Terima kasih.
     `;
 
-    // Membuka Aplikasi Email Default (Gmail/Outlook/dll)
     window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -43,18 +38,13 @@ Mohon bantuannya. Terima kasih.
     e.preventDefault();
     setLoading(true);
 
-    // Simulasi loading UI
     setTimeout(() => {
       setLoading(false);
       handleSendEmail(); 
       setToast({ message: "Membuka aplikasi email Anda...", type: "success" });
-      
-      // Reset form (opsional)
-      // setFormData({ subject: "", category: "access", message: "" });
     }, 1500);
   };
 
-  // --- STYLING ---
   const labelStyle = "small-text";
   const inputStyle = "w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 !text-sm small-text placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all shadow-inner";
 
@@ -74,23 +64,22 @@ Mohon bantuannya. Terima kasih.
             IT Support Center
           </h1>
           <p className="small-text max-w-xl mx-auto text-sm leading-relaxed">
-            Butuh akses khusus, request fitur baru, atau pertanyaan umum? <br/>Tim IT kami siap membantu kebutuhan operasional Anda.
+            Butuh akses khusus, request fitur baru, atau pertanyaan umum? <br className="hidden md:block"/>Tim IT kami siap membantu kebutuhan operasional Anda.
           </p>
         </div>
 
+        {/* RESPONSIVE GRID: 1 Kolom di Mobile, 3 Kolom di Desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* --- KOLOM KIRI: KONTAK CEPAT --- */}
           <div className="lg:col-span-1 space-y-6">
             
-            {/* Kartu Kontak */}
-            <div className="card  p-6 ">
+            <div className="card p-6">
               <h3 className="body-text mb-4">
                 Kontak Langsung
               </h3>
               
               <div className="space-y-3">
-                {/* WhatsApp */}
                 <ContactCard 
                   icon={<MdWhatsapp className="text-green-500 text-xl"/>}
                   bgIcon="bg-green-500/10"
@@ -100,7 +89,6 @@ Mohon bantuannya. Terima kasih.
                   action="Chat Sekarang"
                 />
                 
-                {/* Email */}
                 <ContactCard 
                   icon={<MdEmail className="text-red-500 text-xl"/>}
                   bgIcon="bg-red-500/10"
@@ -112,7 +100,6 @@ Mohon bantuannya. Terima kasih.
               </div>
             </div>
 
-            {/* Quick Info Box */}
             <div className="bg-gradient-to-br from-purple-900/40 to-blue-900/20 border border-purple-500/20 rounded-2xl p-6 text-center">
               <p className="note mb-2">Lupa Password Akun?</p>
               <p className="note !text-xs leading-relaxed my-2">
@@ -128,7 +115,6 @@ Mohon bantuannya. Terima kasih.
           <div className="lg:col-span-2">
             <div className="card relative overflow-hidden">
               
-              {/* Background Glow */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
 
               <div className="relative z-10">
@@ -139,7 +125,6 @@ Mohon bantuannya. Terima kasih.
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   
-                  {/* Subject */}
                   <div>
                     <label className={labelStyle}>Judul Permintaan</label>
                     <input 
@@ -152,9 +137,9 @@ Mohon bantuannya. Terima kasih.
                     />
                   </div>
 
-                  {/* Kategori (Bug Dihapus, diganti opsi lain) */}
                   <div>
                     <label className={labelStyle}>Kategori</label>
+                    {/* RESPONSIVE GRID: 2 Kolom Mobile, 3 Kolom Tablet/Desktop */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 body-text">
                       <RadioOption 
                         label="Akses Akun" 
@@ -186,7 +171,6 @@ Mohon bantuannya. Terima kasih.
                     </div>
                   </div>
 
-                  {/* Deskripsi */}
                   <div>
                     <label className={labelStyle}>Detail Pesan</label>
                     <textarea 
@@ -199,7 +183,6 @@ Mohon bantuannya. Terima kasih.
                     ></textarea>
                   </div>
 
-                  {/* Submit Button */}
                   <div className="flex justify-end pt-4 border-t border-white/5">
                     <button 
                       type="submit" 
@@ -209,7 +192,7 @@ Mohon bantuannya. Terima kasih.
                       hover:scale-105 hover:cursor-pointer hover:bg-purple-700
                       max-w-fit py-2 px-6 transition transform active:scale-95 disabled:opacity-50 disabled:cursor-wait disabled:scale-none w-full md:w-auto justify-center"
                     >
-                      {loading ? "Memproses..." : <><MdSend /> Kirim via Gmail / Email</>}
+                      {loading ? "Memproses..." : <> Kirim via Gmail <MdSend /></>}
                     </button>
                   </div>
 
@@ -225,8 +208,6 @@ Mohon bantuannya. Terima kasih.
   );
 };
 
-// --- Sub-Komponen Kecil ---
-
 const ContactCard = ({ icon, bgIcon, title, value, action, link }) => (
   <a 
     href={link} 
@@ -234,7 +215,7 @@ const ContactCard = ({ icon, bgIcon, title, value, action, link }) => (
     rel="noreferrer" 
     className="flex items-center gap-4 p-4 card border-none !py-6 !px-4 transition group"
   >
-    <div className={`w-10 h-10 flex items-center justify-center rounded-full ${bgIcon}`}>
+    <div className={`w-10 h-10 flex items-center justify-center rounded-full shrink-0 ${bgIcon}`}>
       {icon}
     </div>
     <div className="flex-1 min-w-0">
@@ -259,7 +240,7 @@ const RadioOption = ({ label, value, icon, selected, onChange, color, bgActive }
       }`}
     >
       <div className={`text-2xl ${isSelected ? color : "text-gray-500"}`}>{icon}</div>
-      <span className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-400'}`}>{label}</span>
+      <span className={`text-xs font-bold text-center ${isSelected ? 'text-white' : 'text-gray-400'}`}>{label}</span>
     </div>
     
   );

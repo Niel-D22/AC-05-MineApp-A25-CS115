@@ -33,16 +33,18 @@ const LatestRecomendation = () => {
   return (
     <div className="gap-y-10 flex flex-col w-full">
       
-      {/* BAGIAN 1: REKOMENDASI TERAKHIR (Kode Anda) */}
+      {/* BAGIAN 1: REKOMENDASI TERAKHIR */}
       <div className="w-full">
-          <div className="flex justify-between items-end mb-4">
-            <h1 className="heading-1"><span className="text-font">Rekomendasi</span> Terbaru</h1>
-            <span className="note text-xs text-gray-400 pb-1">Berdasarkan riwayat tanya jawab AI</span>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 gap-2 md:gap-0">
+            <div>
+              <h1 className="heading-1"><span className="text-font">Rekomendasi</span> Terbaru</h1>
+              <span className="note text-xs text-gray-400 pb-1">Berdasarkan riwayat tanya jawab AI</span>
+            </div>
           </div>
           
           <div className="card flex flex-col justify-between">
             <div>
-              <div className="flex justify-between items-start mb-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4 sm:gap-0">
                 <div className="flex items-center gap-3">
                   <div className="p-3 rounded-full bg-purple-500/20 text-purple-400">
                     <FiActivity size={24} />
@@ -53,7 +55,7 @@ const LatestRecomendation = () => {
                   </div>
                 </div>
                 {latestRec && (
-                  <span className="date">
+                  <span className="date text-xs sm:text-sm">
                     {latestRec.date}
                   </span>
                 )}
@@ -67,7 +69,8 @@ const LatestRecomendation = () => {
                   <p className="heading-2 !text-lg my-4 line-clamp-2">
                     "{latestRec.title}"
                   </p>
-                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-300 my-4">
+                  {/* Grid responsif untuk stats */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-300 my-4">
                     <div className="bg-white/5 p-2 rounded-lg border border-white/5">
                       <span className="block note text-[10px] uppercase">Prediksi</span>
                       <span className="body-text !text-xl font-bold text-primary">{latestRec.prediction} T</span>
@@ -94,7 +97,7 @@ const LatestRecomendation = () => {
           </div> 
       </div>
 
-      {/* BAGIAN 2: SUMMARY PLAN TERBARU (Kode Update dengan Logika Mining/Shipping) */}
+      {/* BAGIAN 2: SUMMARY PLAN TERBARU */}
       <div className="w-full">
         <div className="flex justify-between items-end mb-4">
             <h1 className="heading-1"><span className="text-font">Summary Plan</span> Final</h1>
@@ -106,7 +109,8 @@ const LatestRecomendation = () => {
             </button>
         </div>
 
-        <div className="flex w-full gap-x-6"> 
+        {/* UPDATE: flex-col di mobile, md:flex-row di desktop. gap-y-6 agar ada jarak saat ditumpuk */}
+        <div className="flex flex-col md:flex-row w-full gap-x-6 gap-y-6"> 
             {latestPlans.length > 0 ? (
             latestPlans.map((plan, index) => {
                 
@@ -133,7 +137,8 @@ const LatestRecomendation = () => {
                 };
 
                 return (
-                <div key={index} className="card flex flex-col justify-between w-1/2 bg-[#1e1e1e]">
+                // UPDATE: w-full di mobile, w-1/2 di desktop (md:w-1/2)
+                <div key={index} className="card flex flex-col justify-between w-full md:w-1/2 bg-[#1e1e1e]">
                     
                     <div className="flex justify-between items-start border-b border-white/10 pb-3 mb-3">
                     <div className="flex-1 pr-2">
@@ -157,7 +162,8 @@ const LatestRecomendation = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-4 gap-2 mb-4">
+                    {/* UPDATE: grid-cols-2 di mobile agar ikon tidak terlalu kecil, md:grid-cols-4 */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
                         <div className="text-center p-2 bg-white/5 rounded-lg border border-white/5">
                             <div className="flex justify-center mb-1">{config.iconUnit}</div>
                             <p className="note !text-[10px] uppercase mb-0.5">{config.labelUnit}</p>
@@ -188,7 +194,8 @@ const LatestRecomendation = () => {
                     </div>
 
                     <div className="mb-4">
-                    <div className="grid grid-cols-3 gap-3 mb-3">
+                    {/* UPDATE: grid-cols-1 di mobile kecil, sm:grid-cols-3 biar rapi */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                         <div className="bg-white/5 p-2 rounded-lg border border-white/5">
                             <p className="note !text-[10px]">Prediksi Output</p>
                             <p className="body-text !text-lg text-primary">{plan.prediction} T</p>
@@ -200,14 +207,14 @@ const LatestRecomendation = () => {
                             </p>
                         </div>
                         <div className="bg-white/5 p-2 rounded-lg border border-white/5">
-                            <p className="note !text-[10px]">Gap Target</p>
+                            <p className="note !text-[10px]">Target</p>
                             <p className={`body-text !text-lg ${parseFloat(plan.gap) > 0 ? "text-red-400" : "text-green-400"}`}>
                             {plan.target} T
                             </p>
                         </div>
                     </div>
                     
-                    <div className="flex items-center justify-end date !w-fit">
+                    <div className="flex items-center justify-end date !w-fit ml-auto">
                         <FiCalendar /> {plan.date}
                     </div>
                     </div>

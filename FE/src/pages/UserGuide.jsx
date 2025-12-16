@@ -5,7 +5,6 @@ import {
 } from "react-icons/md";
 import PageTransition from "../component/PageTransition";
 
-// Data Konten Panduan
 const guideSteps = [
   {
     id: 1,
@@ -123,7 +122,7 @@ const AccordionItem = ({ item, isOpen, onClick }) => {
 };
 
 const UserGuide = () => {
-  const [openIndex, setOpenIndex] = useState(0); // Default terbuka yang pertama
+  const [openIndex, setOpenIndex] = useState(0); 
 
   const handleToggle = (index) => {
     setOpenIndex(openIndex === index ? -1 : index);
@@ -131,7 +130,7 @@ const UserGuide = () => {
 
   return (
     <PageTransition>
-    <div className="w-full max-w-4xl mx-auto pb-20 animate-fade-in-up">
+    <div className="w-full max-w-4xl mx-auto pb-20 animate-fade-in-up px-4">
       {/* Header Dokumentasi */}
       <div className="text-center mb-10 pt-6">
         <div className="inline-flex items-center gap-2 px-4 py-1 note tracking-wider mb-4">
@@ -145,10 +144,10 @@ const UserGuide = () => {
         </p>
       </div>
 
-      {/* Accordion Content */}
+      {/* RESPONSIVE LAYOUT: Column di Mobile, Row di Desktop */}
       <div className="flex flex-col md:flex-row gap-8 items-start">
         
-        {/* Kolom Kiri: Steps */}
+        {/* Kolom Kiri: Steps (Lebar Penuh di Mobile, 2/3 di Desktop) */}
         <div className="w-full md:w-2/3">
           {guideSteps.map((item, index) => (
             <AccordionItem
@@ -160,8 +159,9 @@ const UserGuide = () => {
           ))}
         </div>
 
-        {/* Kolom Kanan: Troubleshooting Cepat */}
-        <div className="card !w-[40%] sticky top-6">
+        {/* Kolom Kanan: Troubleshooting Cepat 
+            RESPONSIVE FIX: w-full di Mobile agar tidak gepeng, w-[40%] di Tablet/Desktop */}
+        <div className="card w-full md:w-[40%] sticky top-6 h-fit">
           <h3 className="warning !text-[18px] mb-4 flex items-center gap-2">
             <MdWarning className="text-yellow-500"/> Troubleshooting
           </h3>

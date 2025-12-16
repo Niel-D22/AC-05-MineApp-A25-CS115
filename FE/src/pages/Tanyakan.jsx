@@ -105,7 +105,7 @@ const Tanyakan = () => {
     setCurrentStep(STEPS.INPUT);
     setCurrentSessionId(null);
     setSelectedScenario(null);
-    setFinalPlanData(null); // Clear final data too
+    setFinalPlanData(null); 
 
     localStorage.removeItem(STORAGE_KEYS.CHAT);
     localStorage.removeItem(STORAGE_KEYS.DATA);
@@ -419,7 +419,6 @@ const Tanyakan = () => {
         planType = "Shipping";
       }
 
-      // ... (Kode logika pembuatan planId, finalData, newPlan TETAP SAMA seperti sebelumnya) ...
       const finalTitle = selectedScenario
         ? selectedScenario.title
         : apiResponseData.recommendations?.[0]?.title || "Analisis Plan";
@@ -531,9 +530,8 @@ const Tanyakan = () => {
     } catch (error) {
       console.error("Error finalizing:", error);
       showToast("Terjadi kesalahan saat finalisasi.", "error");
-      setIsFinalizing(false); // Buka kunci jika error agar bisa coba lagi
+      setIsFinalizing(false); 
     }
-    // Note: Jika sukses, kita biarkan isFinalizing = true agar tombol tetap mati.
   };
 
   // --- LOGIC ADD EMAIL (CHIP) ---
@@ -748,11 +746,12 @@ const Tanyakan = () => {
       case STEPS.FINALIZATION:
         return (
           <>
-            <div className="flex justify-between items-center mb-4">
+            {/* RESPONSIVE: Menggunakan flex-col di mobile agar tombol reset tidak terhimpit */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
               <h3 className="heading-2">Analisis & Diskusi</h3>
               <button
                 onClick={handleResetClick}
-                className="date !bg-red-500/10 !hover:bg-red-500/20 hover:cursor-pointer hover:scale-110 !text-red-400 border border-red-500/20 rounded-lg flex items-center gap-2 transition"
+                className="date !bg-red-500/10 !hover:bg-red-500/20 hover:cursor-pointer hover:scale-110 !text-red-400 border border-red-500/20 rounded-lg flex items-center gap-2 transition w-full md:w-auto justify-center md:justify-start"
               >
                 <MdDeleteForever /> Reset Sesi
               </button>
@@ -820,7 +819,8 @@ const Tanyakan = () => {
         {/* --- MODAL INPUT EMAIL (MULTIPLE RECIPIENTS) --- */}
         {emailModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-            <div className="bg-[#1e1e1e] border border-gray-700 w-full max-w-md rounded-xl shadow-2xl p-6 relative">
+            {/* RESPONSIVE: Width diatur agar tidak mentok di HP (w-[95%]) */}
+            <div className="bg-[#1e1e1e] border border-gray-700 w-[95%] sm:w-full max-w-md rounded-xl shadow-2xl p-6 relative">
               <button
                 onClick={() => setEmailModalOpen(false)}
                 className="absolute top-4 right-4 text-gray-400 hover:text-white"
@@ -875,17 +875,18 @@ const Tanyakan = () => {
                 * Tekan Enter untuk mengunci email
               </p>
 
-              <div className="flex justify-end gap-3">
+              {/* RESPONSIVE: Tombol ditumpuk di mobile */}
+              <div className="flex justify-end gap-3 flex-col sm:flex-row">
                 <button
                   onClick={() => setEmailModalOpen(false)}
-                  className="px-4 py-2 rounded-lg text-gray-400 hover:text-white text-sm"
+                  className="px-4 py-2 rounded-lg text-gray-400 hover:text-white text-sm w-full sm:w-auto"
                 >
                   Batal
                 </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={isSendingEmail}
-                  className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold flex items-center gap-2 disabled:opacity-50 transition shadow-lg"
+                  className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-50 transition shadow-lg w-full sm:w-auto"
                 >
                   {isSendingEmail ? (
                     "Mengirim..."
@@ -901,7 +902,7 @@ const Tanyakan = () => {
           </div>
         )}
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto w-full">
           <div className="mb-8">
             <StepBar currentStep={currentStep} />
           </div>

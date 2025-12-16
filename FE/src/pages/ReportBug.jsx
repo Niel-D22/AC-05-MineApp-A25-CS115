@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { 
   MdBugReport, MdSend, MdInfoOutline, MdCheckCircle, MdEmail 
 } from "react-icons/md";
-// Pastikan path ini sesuai dengan file Toast Anda
 import { Toast } from "../component/CostumAlerts"; 
 import PageTransition from "../component/PageTransition";
 
@@ -17,12 +16,10 @@ const ReportBug = () => {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
-  // --- LOGIKA KIRIM EMAIL ---
   const handleSendEmail = () => {
     const recipient = "danielwarouw01@gmail.com";
     const subject = `[BUG REPORT] ${formData.title} - Severity: ${formData.severity.toUpperCase()}`;
     
-    // Format Isi Email
     const body = `
 Halo Tim Developer,
 
@@ -43,7 +40,6 @@ ${formData.steps}
 Mohon segera diperbaiki. Terima kasih.
     `;
 
-    // Membuka email client user
     window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -58,7 +54,6 @@ Mohon segera diperbaiki. Terima kasih.
     }, 1500);
   };
 
-  // --- STYLING ---
   const labelStyle = "small-text";
   const inputStyle = "w-full bg-[#0a0a0a] border border-white/10 rounded-lg px-4 py-3 !text-sm small-text placeholder-gray-600 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all shadow-inner";
 
@@ -82,16 +77,17 @@ Mohon segera diperbaiki. Terima kasih.
           </div>
         </div>
 
+        {/* RESPONSIVE LAYOUT: Column di Mobile, Row di Desktop (LG) */}
         <div className="flex flex-col lg:flex-row gap-10">
           
           {/* --- KOLOM KIRI: FORMULIR --- */}
-          <div className="lg:w-2/3">
+          <div className="w-full lg:w-2/3">
             <div className="card relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
 
               <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
                 
-                {/* Baris 1: Judul & Modul */}
+                {/* Baris 1: Judul & Modul (Stack di Mobile, 2 Kolom di Tablet+) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className={labelStyle}>Judul Masalah <span className="text-red-500">*</span></label>
@@ -123,7 +119,7 @@ Mohon segera diperbaiki. Terima kasih.
                     </div>
                 </div>
 
-                {/* Baris 2: Severity Level */}
+                {/* Baris 2: Severity Level (2 Kolom Mobile, 4 Kolom Tablet+) */}
                 <div>
                     <label className={labelStyle}>Seberapa Parah?</label>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2 small-text">
@@ -188,7 +184,7 @@ Mohon segera diperbaiki. Terima kasih.
           </div>
 
           {/* --- KOLOM KANAN: SIDEBAR --- */}
-          <div className="lg:w-1/3 space-y-6">
+          <div className="w-full lg:w-1/3 space-y-6">
             
             {/* Widget Tips */}
             <div className="card border-none p-6 relative overflow-hidden">
@@ -235,7 +231,6 @@ Mohon segera diperbaiki. Terima kasih.
   );
 };
 
-// --- Sub-Komponen Pilihan Severity ---
 const SeverityOption = ({ label, desc, color, value, current, onClick }) => {
     const isSelected = current === value;
     const borderColor = color.replace('bg-', 'border-'); 
