@@ -1,0 +1,3 @@
+GEMINI_API_KEY = cari key di google ai studio
+SENDER_EMAIL="email untuk kirim email"
+APP_PASSWORD="password khusus email, bukan yang biasanya digunakan untuk login"
